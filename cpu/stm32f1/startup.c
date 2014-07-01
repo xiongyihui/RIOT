@@ -81,9 +81,9 @@ void reset_handler(void)
  */
 void dummy_handler(void)
 {
+    core_panic(DUMMY_HANDLER, "DUMMY HANDLER");
     while (1) {asm ("nop");}
 }
-
 
 void isr_nmi(void)
 {
@@ -184,7 +184,6 @@ void isr_dma2_ch1(void)       __attribute__ ((weak, alias("dummy_handler")));
 void isr_dma2_ch2(void)       __attribute__ ((weak, alias("dummy_handler")));
 void isr_dma2_ch3(void)       __attribute__ ((weak, alias("dummy_handler")));
 void isr_dma2_ch4_5(void)     __attribute__ ((weak, alias("dummy_handler")));
-
 
 
 /* interrupt vector table */
