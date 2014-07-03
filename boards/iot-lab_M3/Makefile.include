@@ -3,7 +3,7 @@ export CPU = stm32f1
 export CPU_MODEL = stm32f103re
 
 # set the default port
-export PORT ?= /dev/ttyUSB2
+export PORT ?= /dev/ttyUSB0
 
 # define tools used for building the project
 export PREFIX = arm-none-eabi-

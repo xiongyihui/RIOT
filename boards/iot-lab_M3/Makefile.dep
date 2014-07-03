@@ -4,5 +4,5 @@ ifneq (,$(filter defaulttransceiver,$(USEMODULE)))
 endif
 
 ifneq (,$(findstring at86rf231,$(USEMODULE)))
-		USEMODULE += at86rf231
+    USEMODULE += at86rf231
 endif

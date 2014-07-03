@@ -7,7 +7,7 @@
  */
 
 /**
- * @ingroup     cpu_cortexm4_common
+ * @ingroup     cpu_cortex-m3
  * @{
  *
  * @file
@@ -71,7 +71,7 @@ char *thread_arch_stack_init(void *(*task_func)(void *), void *arg, void *stack_
     stk--;
     *stk = STACK_MARKER;
 
-    /* TODO: fix FPU handling for Cortex-M4 */
+    /* TODO: fix FPU handling for Cortex-M3 */
     /*
     stk--;
     *stk = (unsigned int) 0;

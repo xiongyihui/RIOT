@@ -48,7 +48,7 @@ void at86rf231_spi1_init(void)
     // SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
     // SPI_InitStructure.SPI_CRCPolynomial = 7;
     //SPI_Init(SPI1, &SPI_InitStructure);
-#warning implement spi
+// #warning implement spi
     /* Enable interrupt */
     //SPI_I2S_ITConfig(SPI1, SPI_I2S_IT_TXE, ENABLE);
     /* Enable SPI */

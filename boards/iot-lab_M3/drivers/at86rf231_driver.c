@@ -81,7 +81,7 @@ void disable_exti_interrupt(void)
     // EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
     // EXTI_InitStructure.EXTI_LineCmd = DISABLE;
     // EXTI_Init(&EXTI_InitStructure);
-#warning not implemented yet
+// #warning not implemented yet
 }
 
 
