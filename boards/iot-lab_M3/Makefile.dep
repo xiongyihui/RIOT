@@ -3,6 +3,6 @@ ifneq (,$(filter defaulttransceiver,$(USEMODULE)))
     USEMODULE += transceiver
 endif
 
-ifneq (,$(findstring at86rf231,$(USEMODULE)))
+ifneq (,$(filter at86rf231,$(USEMODULE)))
     USEMODULE += at86rf231
 endif
