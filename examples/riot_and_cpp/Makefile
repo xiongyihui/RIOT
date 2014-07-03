@@ -30,7 +30,7 @@ QUIET ?= 1
 # Blacklist boards
 BOARD_BLACKLIST := arduino-due avsextrem chronos mbed_lpc1768 msb-430h msba2 redbee-econotag \
                    telosb wsn430-v1_3b wsn430-v1_4 msb-430 pttu udoo qemu-i386 z1 stm32f0discovery \
-                   stm32f4discovery
+                   stm32f4discovery iot-lab_M3
 # This example only works with native for now.
 # msb430-based boards: msp430-g++ is not provided in mspgcc.
 # (People who want use c++ can build c++ compiler from source, or get binaries from Energia http://energia.nu/)
