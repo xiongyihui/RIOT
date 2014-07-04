@@ -27,86 +27,6 @@ uint32_t SystemCoreClock = F_CPU;
 
 __I uint8_t AHBPrescTable[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
 
-static void SetSysClock(void);
-
-void SystemInit(void)
-{
-    /* Reset the RCC clock configuration to the default reset state(for debug purpose) */
-    /* Set HSION bit */
-    RCC->CR |= (uint32_t)0x00000001;
-
-    /* Reset SW, HPRE, PPRE1, PPRE2, ADCPRE and MCO bits */
-    RCC->CFGR &= (uint32_t)0xF0FF0000;
-
-    /* Reset HSEON, CSSON and PLLON bits */
-    RCC->CR &= (uint32_t)0xFEF6FFFF;
-
-    /* Reset HSEBYP bit */
-    RCC->CR &= (uint32_t)0xFFFBFFFF;
-
-    /* Reset PLLSRC, PLLXTPRE, PLLMUL and USBPRE/OTGFSPRE bits */
-    RCC->CFGR &= (uint32_t)0xFF80FFFF;
-
-    /* Disable all interrupts and clear pending bits  */
-    RCC->CIR = 0x009F0000;
-
-    /* Configure the System clock frequency, HCLK, PCLK2 and PCLK1 prescalers */
-    /* Configure the Flash Latency cycles and enable prefetch buffer */
-    SetSysClock();
-
-    SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH. */
-}
-
-void SystemCoreClockUpdate(void)
-{
-    uint32_t tmp = 0, pllmull = 0, pllsource = 0;
-    /* Get SYSCLK source -------------------------------------------------------*/
-    tmp = RCC->CFGR & RCC_CFGR_SWS;
-
-    switch (tmp) {
-        case 0x00:  /* HSI used as system clock */
-            SystemCoreClock = HSI_VALUE;
-            break;
-
-        case 0x04:  /* HSE used as system clock */
-            SystemCoreClock = HSE_VALUE;
-            break;
-
-        case 0x08:  /* PLL used as system clock */
-
-            /* Get PLL clock source and multiplication factor ----------------------*/
-            pllmull = RCC->CFGR & RCC_CFGR_PLLMULL;
-            pllsource = RCC->CFGR & RCC_CFGR_PLLSRC;
-            pllmull = (pllmull >> 18) + 2;
-
-            if (pllsource == 0x00) {
-                /* HSI oscillator clock divided by 2 selected as PLL clock entry */
-                SystemCoreClock = (HSI_VALUE >> 1) * pllmull;
-            }
-            else {
-                /* HSE selected as PLL clock entry */
-                if ((RCC->CFGR & RCC_CFGR_PLLXTPRE) != (uint32_t)RESET) {
-                    /* HSE oscillator clock divided by 2 */
-                    SystemCoreClock = (HSE_VALUE >> 1) * pllmull;
-                }
-                else {
-                    SystemCoreClock = HSE_VALUE * pllmull;
-                }
-            }
-            break;
-
-        default:
-            SystemCoreClock = HSI_VALUE;
-            break;
-    }
-
-    /* Compute HCLK clock frequency */
-    /* Get HCLK prescaler */
-    tmp = AHBPrescTable[((RCC->CFGR & RCC_CFGR_HPRE) >> 4)];
-    /* HCLK clock frequency */
-    SystemCoreClock >>= tmp;
-}
-
 static void SetSysClock(void)
 {
     __IO uint32_t StartUpCounter = 0, HSEStatus = 0;
@@ -177,4 +97,33 @@ static void SetSysClock(void)
         /* If HSE fails to start-up, the application will have wrong clock
            configuration. User can add here some code to deal with this error */
     }
+}
+
+void SystemInit(void)
+{
+    /* Reset the RCC clock configuration to the default reset state(for debug purpose) */
+    /* Set HSION bit */
+    RCC->CR |= (uint32_t)0x00000001;
+
+    /* Reset SW, HPRE, PPRE1, PPRE2, ADCPRE and MCO bits */
+    RCC->CFGR &= (uint32_t)0xF0FF0000;
+
+    /* Reset HSEON, CSSON and PLLON bits */
+    RCC->CR &= (uint32_t)0xFEF6FFFF;
+
+    /* Reset HSEBYP bit */
+    RCC->CR &= (uint32_t)0xFFFBFFFF;
+
+    /* Reset PLLSRC, PLLXTPRE, PLLMUL and USBPRE/OTGFSPRE bits */
+    RCC->CFGR &= (uint32_t)0xFF80FFFF;
+
+    /* Disable all interrupts and clear pending bits  */
+    RCC->CIR = 0x009F0000;
+
+    /* Configure the System clock frequency, HCLK, PCLK2 and PCLK1 prescalers */
+    /* Configure the Flash Latency cycles and enable prefetch buffer */
+    SetSysClock();
+
+    /* Vector Table Relocation in Internal FLASH. */
+    SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET;
 }
