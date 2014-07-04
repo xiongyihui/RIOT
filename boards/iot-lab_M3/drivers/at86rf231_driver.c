@@ -1,3 +1,14 @@
+/**
+ * Copyright (C) 2014 Freie Universität Berlin
+ *
+ * This file subject to the terms and conditions of the GNU Lesser General
+ * Public License v2.1. See the file LICENSE in the top level directory for more
+ * details.
+ *
+ * @file   at86rf231_driver.c
+ * @author Thomas Eichinger <thomas.eichinger@fu-berlin.de>
+ */
+
 #include <stdio.h>
 #include <stddef.h>
 
@@ -13,8 +24,6 @@
 #include "at86rf231.h"
 #include "at86rf231_spi.h"
 #include "at86rf231_spi1.h"
-
-extern volatile unsigned int sched_context_switch_request;
 
 /*
 SPI1
@@ -100,6 +109,7 @@ void at86rf231_gpio_spi_interrupts_init(void)
 
     /* Enable AFIO clock */
     // RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+    RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
 
     /* Connect EXTI4 Line to PC4 pin */
     // GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource4);

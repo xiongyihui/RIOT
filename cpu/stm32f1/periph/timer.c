@@ -26,6 +26,8 @@
 #include "periph_conf.h"
 #include "periph/timer.h"
 
+#include "thread.h"
+
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
@@ -341,5 +343,9 @@ static inline void irq_handler(tim_t timer, TIM_TypeDef *dev)
         dev->SR &= ~TIM_SR_CC4IF;
         config[timer].cb(3);
         DEBUG("-4\n");
+    }
+
+    if (sched_context_switch_request) {
+        thread_yield();
     }
 }

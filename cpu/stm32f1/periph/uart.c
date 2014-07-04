@@ -26,6 +26,9 @@
 #include "periph_conf.h"
 #include "periph/uart.h"
 
+#include "sched.h"
+#include "thread.h"
+
 
 /**
  * @brief Each UART device has to store two callbacks.
@@ -303,5 +306,9 @@ static inline void irq_handler(uint8_t uartnum, USART_TypeDef *dev)
     }
     else if (dev->SR & USART_SR_TXE) {
         config[uartnum].tx_cb();
+    }
+
+    if (sched_context_switch_request) {
+        thread_yield();
     }
 }

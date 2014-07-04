@@ -14,7 +14,6 @@ void at86rf231_spi1_init(void)
     // RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
     // RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
     // RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
-    // RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
 
     /* GPIO */
 
@@ -48,11 +47,13 @@ void at86rf231_spi1_init(void)
     // SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
     // SPI_InitStructure.SPI_CRCPolynomial = 7;
     //SPI_Init(SPI1, &SPI_InitStructure);
-// #warning implement spi
+    spi_init_master(SPI_0, SPI_CONF_FIRST_RISING, 4500000);
+
     /* Enable interrupt */
     //SPI_I2S_ITConfig(SPI1, SPI_I2S_IT_TXE, ENABLE);
     /* Enable SPI */
     // SPI_Cmd(SPI1, ENABLE);
+    spi_poweron(SPI_0);
 }
 
 uint8_t at86rf231_spi_transfer_byte(uint8_t byte)

@@ -7,13 +7,14 @@
  */
 
 /**
- * @ingroup     cpu_sam3x8e
+ * @ingroup     cpu_stm32f1
  * @{
  *
  * @file        startup.c
  * @brief       Startup code and interrupt vector definition
  *
  * @author      Hauke Petersen <hauke.petersen@fu-berlin.de>
+ * @author      Thomas Eichinger <thomas.eichinger@fu-berlin.de>
  *
  * @}
  */
