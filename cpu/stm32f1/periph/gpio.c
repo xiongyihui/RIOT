@@ -30,8 +30,13 @@
  */
 
 #include "cpu.h"
+#include "stm32f10x.h"
 #include "periph/gpio.h"
 #include "periph_conf.h"
+#include "board.h"
+
+#define ENABLE_DEBUG (0)
+#include "debug.h"
 
 typedef struct {
     void (*cb)(void);
@@ -129,6 +134,35 @@ int gpio_init_out(gpio_t dev, gpio_pp_t pullup)
             pin = GPIO_11_PIN;
             break;
 #endif
+#ifdef GPIO_12_EN
+        case GPIO_12:
+            GPIO_12_CLKEN();
+            port = GPIO_12_PORT;
+            pin = GPIO_12_PIN;
+            break;
+#endif
+#ifdef GPIO_13_EN
+        case GPIO_13:
+            GPIO_13_CLKEN();
+            port = GPIO_13_PORT;
+            pin = GPIO_13_PIN;
+            break;
+#endif
+#ifdef GPIO_14_EN
+        case GPIO_14:
+            GPIO_14_CLKEN();
+            port = GPIO_14_PORT;
+            pin = GPIO_14_PIN;
+            break;
+#endif
+#ifdef GPIO_15_EN
+        case GPIO_15:
+            GPIO_15_CLKEN();
+            port = GPIO_15_PORT;
+            pin = GPIO_15_PIN;
+            break;
+#endif
+
         case GPIO_UNDEFINED:
         default:
             return -1;
@@ -138,13 +172,11 @@ int gpio_init_out(gpio_t dev, gpio_pp_t pullup)
         port->CRL &= ~(0xf << (4 * pin));
         port->CRL |= (0x3 << (4* pin)); /* Output mode, 50 MHz */
                                         /* general purpose push-pull set implicitly */
-        port->ODR |= (1 << pin);        /* set pin to low signal */
     }
     else {
         port->CRH &= ~(0xf << (4 * (pin-8)));
         port->CRH |= (0x3 << (4* (pin-8))); /* Output mode, 50 MHz */
                                             /* general purpose push-pull set implicitly */
-        port->ODR |= (1 << pin);            /* set pin to low signal */
     }
 
     return 0; /* all OK */
@@ -240,6 +272,35 @@ int gpio_init_in(gpio_t dev, gpio_pp_t pullup)
             pin = GPIO_11_PIN;
             break;
 #endif
+#ifdef GPIO_12_EN
+        case GPIO_12:
+            GPIO_12_CLKEN();
+            port = GPIO_12_PORT;
+            pin = GPIO_12_PIN;
+            break;
+#endif
+#ifdef GPIO_13_EN
+        case GPIO_13:
+            GPIO_13_CLKEN();
+            port = GPIO_13_PORT;
+            pin = GPIO_13_PIN;
+            break;
+#endif
+#ifdef GPIO_14_EN
+        case GPIO_14:
+            GPIO_14_CLKEN();
+            port = GPIO_14_PORT;
+            pin = GPIO_14_PIN;
+            break;
+#endif
+#ifdef GPIO_15_EN
+        case GPIO_15:
+            GPIO_15_CLKEN();
+            port = GPIO_15_PORT;
+            pin = GPIO_15_PIN;
+            break;
+#endif
+
         case GPIO_UNDEFINED:
         default:
             return -1;
@@ -247,9 +308,11 @@ int gpio_init_in(gpio_t dev, gpio_pp_t pullup)
 
     if (pin < 8) {
         port->CRL &= ~(0xf << (4 * pin));
+        port->CRL |= (0x4 << (4 * pin));
     }
     else {
-        port->CRH &= ~(0xf << (4 * (pin-8)));
+        port->CRL &= ~(0xf << (4 * pin));
+        port->CRH |= (0x4 << (4 * (pin-8)));
     }
 
     return 0; /* everything alright here */
@@ -275,10 +338,9 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
     NVIC_SetPriority(EXTI2_IRQn, GPIO_IRQ_PRIO);
     NVIC_SetPriority(EXTI4_IRQn, GPIO_IRQ_PRIO);
 
-    /* enable clock of the SYSCFG module for EXTI configuration */
-    //RCC->APB2ENR |= RCC_APB2ENR_SYSCFGCOMPEN;
+    RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
 
-    /* read pin number, set EXIT channel and enable global interrupt for EXTI channel */
+    /* read pin number, set EXTI channel and enable global interrupt for EXTI channel */
     switch (dev) {
 #ifdef GPIO_0_EN
         case GPIO_0:
@@ -388,6 +450,42 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
             NVIC_EnableIRQ(GPIO_11_IRQ);
             break;
 #endif
+#ifdef GPIO_12_EN
+        case GPIO_12:
+            pin = GPIO_12_PIN;
+            exti_line = GPIO_12_EXTI_LINE;
+            GPIO_12_EXTI_CFG();
+            NVIC_SetPriority(GPIO_12_IRQ, GPIO_IRQ_PRIO);
+            NVIC_EnableIRQ(GPIO_12_IRQ);
+            break;
+#endif
+#ifdef GPIO_13_EN
+        case GPIO_13:
+            pin = GPIO_13_PIN;
+            exti_line = GPIO_13_EXTI_LINE;
+            GPIO_13_EXTI_CFG();
+            NVIC_SetPriority(GPIO_13_IRQ, GPIO_IRQ_PRIO);
+            NVIC_EnableIRQ(GPIO_13_IRQ);
+            break;
+#endif
+#ifdef GPIO_14_EN
+        case GPIO_14:
+            pin = GPIO_14_PIN;
+            exti_line = GPIO_14_EXTI_LINE;
+            GPIO_14_EXTI_CFG();
+            NVIC_SetPriority(GPIO_14_IRQ, GPIO_IRQ_PRIO);
+            NVIC_EnableIRQ(GPIO_14_IRQ);
+            break;
+#endif
+#ifdef GPIO_15_EN
+        case GPIO_15:
+            pin = GPIO_15_PIN;
+            exti_line = GPIO_15_EXTI_LINE;
+            GPIO_15_EXTI_CFG();
+            NVIC_SetPriority(GPIO_15_IRQ, GPIO_IRQ_PRIO);
+            NVIC_EnableIRQ(GPIO_15_IRQ);
+            break;
+#endif
         case GPIO_UNDEFINED:
         default:
             return -1;
@@ -418,6 +516,203 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
     EXTI->IMR |= (1 << exti_line);
 
     return 0;
+}
+
+int gpio_irq_enable(gpio_t dev)
+{
+    uint8_t exti_line;
+
+    switch(dev) {
+#ifdef GPIO_0_EN
+        case GPIO_0:
+            exti_line = GPIO_0_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_1_EN
+        case GPIO_1:
+            exti_line = GPIO_1_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_2_EN
+        case GPIO_2:
+            exti_line = GPIO_2_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_3_EN
+        case GPIO_3:
+            exti_line = GPIO_3_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_4_EN
+        case GPIO_4:
+            exti_line = GPIO_4_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_5_EN
+        case GPIO_5:
+            exti_line = GPIO_5_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_6_EN
+        case GPIO_6:
+            exti_line = GPIO_6_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_7_EN
+        case GPIO_7:
+            exti_line = GPIO_7_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_8_EN
+        case GPIO_8:
+            exti_line = GPIO_8_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_9_EN
+        case GPIO_9:
+            exti_line = GPIO_9_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_10_EN
+        case GPIO_10:
+            exti_line = GPIO_10_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_11_EN
+        case GPIO_11:
+            exti_line = GPIO_11_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_12_EN
+        case GPIO_12:
+            exti_line = GPIO_12_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_13_EN
+        case GPIO_13:
+            exti_line = GPIO_13_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_14_EN
+        case GPIO_14:
+            exti_line = GPIO_14_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_15_EN
+        case GPIO_15:
+            exti_line = GPIO_15_EXTI_LINE;
+            break;
+#endif
+
+        case GPIO_UNDEFINED:
+        default:
+            return -1;
+    }
+    /* save state */
+    int state = (EXTI->IMR & (1 << exti_line) >> exti_line);
+
+    /* unmask the pins interrupt channel */
+    EXTI->IMR |= (1 << exti_line);
+
+    return state;
+}
+
+int gpio_irq_disable(gpio_t dev)
+{
+    uint8_t exti_line;
+
+    switch(dev) {
+#ifdef GPIO_0_EN
+        case GPIO_0:
+            exti_line = GPIO_0_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_1_EN
+        case GPIO_1:
+            exti_line = GPIO_1_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_2_EN
+        case GPIO_2:
+            exti_line = GPIO_2_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_3_EN
+        case GPIO_3:
+            exti_line = GPIO_3_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_4_EN
+        case GPIO_4:
+            exti_line = GPIO_4_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_5_EN
+        case GPIO_5:
+            exti_line = GPIO_5_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_6_EN
+        case GPIO_6:
+            exti_line = GPIO_6_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_7_EN
+        case GPIO_7:
+            exti_line = GPIO_7_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_8_EN
+        case GPIO_8:
+            exti_line = GPIO_8_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_9_EN
+        case GPIO_9:
+            exti_line = GPIO_9_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_10_EN
+        case GPIO_10:
+            exti_line = GPIO_10_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_11_EN
+        case GPIO_11:
+            exti_line = GPIO_11_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_12_EN
+        case GPIO_12:
+            exti_line = GPIO_12_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_13_EN
+        case GPIO_13:
+            exti_line = GPIO_13_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_14_EN
+        case GPIO_14:
+            exti_line = GPIO_14_EXTI_LINE;
+            break;
+#endif
+#ifdef GPIO_15_EN
+        case GPIO_15:
+            exti_line = GPIO_15_EXTI_LINE;
+            break;
+#endif
+        case GPIO_UNDEFINED:
+        default:
+            return -1;
+    }
+    /* save state */
+    int state = ((EXTI->IMR & (1 << exti_line)) >> exti_line);
+
+    /* unmask the pins interrupt channel */
+    EXTI->IMR &= ~(1 << exti_line);
+
+    return state;
 }
 
 int gpio_read(gpio_t dev)
@@ -496,6 +791,30 @@ int gpio_read(gpio_t dev)
         case GPIO_11:
             port = GPIO_11_PORT;
             pin = GPIO_11_PIN;
+            break;
+#endif
+#ifdef GPIO_12_EN
+        case GPIO_12:
+            port = GPIO_12_PORT;
+            pin = GPIO_12_PIN;
+            break;
+#endif
+#ifdef GPIO_13_EN
+        case GPIO_13:
+            port = GPIO_13_PORT;
+            pin = GPIO_13_PIN;
+            break;
+#endif
+#ifdef GPIO_14_EN
+        case GPIO_14:
+            port = GPIO_14_PORT;
+            pin = GPIO_14_PIN;
+            break;
+#endif
+#ifdef GPIO_15_EN
+        case GPIO_15:
+            port = GPIO_15_PORT;
+            pin = GPIO_15_PIN;
             break;
 #endif
         case GPIO_UNDEFINED:
@@ -582,6 +901,26 @@ int gpio_set(gpio_t dev)
             GPIO_11_PORT->ODR |= (1 << GPIO_11_PIN);
             break;
 #endif
+#ifdef GPIO_12_EN
+        case GPIO_12:
+            GPIO_12_PORT->ODR |= (1 << GPIO_12_PIN);
+            break;
+#endif
+#ifdef GPIO_13_EN
+        case GPIO_13:
+            GPIO_13_PORT->ODR |= (1 << GPIO_13_PIN);
+            break;
+#endif
+#ifdef GPIO_14_EN
+        case GPIO_14:
+            GPIO_14_PORT->ODR |= (1 << GPIO_14_PIN);
+            break;
+#endif
+#ifdef GPIO_15_EN
+        case GPIO_15:
+            GPIO_15_PORT->ODR |= (1 << GPIO_15_PIN);
+            break;
+#endif
         case GPIO_UNDEFINED:
         default:
             return -1;
@@ -651,6 +990,26 @@ int gpio_clear(gpio_t dev)
 #ifdef GPIO_11_EN
         case GPIO_11:
             GPIO_11_PORT->ODR &= ~(1 << GPIO_11_PIN);
+            break;
+#endif
+#ifdef GPIO_12_EN
+        case GPIO_12:
+            GPIO_12_PORT->ODR &= ~(1 << GPIO_12_PIN);
+            break;
+#endif
+#ifdef GPIO_13_EN
+        case GPIO_13:
+            GPIO_13_PORT->ODR &= ~(1 << GPIO_13_PIN);
+            break;
+#endif
+#ifdef GPIO_14_EN
+        case GPIO_14:
+            GPIO_14_PORT->ODR &= ~(1 << GPIO_14_PIN);
+            break;
+#endif
+#ifdef GPIO_15_EN
+        case GPIO_15:
+            GPIO_15_PORT->ODR &= ~(1 << GPIO_15_PIN);
             break;
 #endif
         case GPIO_UNDEFINED:

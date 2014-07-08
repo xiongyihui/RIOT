@@ -11,6 +11,3 @@ RIOTBASE ?= $(CURDIR)/../..
 QUIET ?= 1
 
 include $(RIOTBASE)/Makefile.include
-
-reset:
-	$(RIOTBASE)/cpu/$(CPU)/tools/reset.sh

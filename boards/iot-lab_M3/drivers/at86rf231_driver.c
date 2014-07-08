@@ -29,6 +29,7 @@
 #include "arch/thread_arch.h"
 #include "periph/gpio.h"
 #include "periph_conf.h"
+#include "spi.h"
 #include "board.h"
 
 #include "at86rf231.h"
@@ -81,45 +82,34 @@ extern void at86rf231_rx_irq(void);
 static
 void enable_exti_interrupt(void)
 {
-    // EXTI_InitTypeDef   EXTI_InitStructure;
-
-    // EXTI_InitStructure.EXTI_Line = EXTI_Line4;
-    // EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-    // EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
-    // EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-    // EXTI_Init(&EXTI_InitStructure);
-    gpio_init_int(GPIO_6, GPIO_NOPULL, GPIO_RISING, at86rf231_rx_irq);
+    gpio_irq_enable(SPI_0_IRQ0_GPIO);
 }
+
 static
 void disable_exti_interrupt(void)
 {
-    // EXTI_InitTypeDef   EXTI_InitStructure;
-
-    // EXTI_InitStructure.EXTI_Line = EXTI_Line4;
-    // EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-    // EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
-    // EXTI_InitStructure.EXTI_LineCmd = DISABLE;
-    // EXTI_Init(&EXTI_InitStructure);
-// #warning not implemented yet
+    gpio_irq_disable(SPI_0_IRQ0_GPIO);
 }
-
 
 void at86rf231_gpio_spi_interrupts_init(void)
 {
+    /* set up GPIO pins */
+    /* SCLK and MOSI*/
+    GPIOA->CRL &= ~(0xf << (5 * 4));
+    GPIOA->CRL |= (0xb << (5 * 4));
+    GPIOA->CRL &= ~(0xf << (7 * 4));
+    GPIOA->CRL |= (0xb << (7 * 4));
+    /* MISO */
+    gpio_init_in(SPI_0_MISO_GPIO, GPIO_NOPULL);
+
     /* SPI1 init */
     at86rf231_spi1_init();
 
-    /* IRQ0 : PC4, INPUT and IRQ */
-    // RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+    spi_poweron(SPI_0);
 
-    // GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
-    // GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    // GPIO_Init(GPIOC, &GPIO_InitStructure);
-    gpio_init_in(GPIO_4, GPIO_NOPULL);
-
-    /* Enable AFIO clock */
-    // RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-    RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
+    /* IRQ0 */
+    gpio_init_in(SPI_0_IRQ0_GPIO, GPIO_NOPULL);
+    gpio_init_int(SPI_0_IRQ0_GPIO, GPIO_NOPULL, GPIO_RISING, at86rf231_rx_irq);
 
     /* Connect EXTI4 Line to PC4 pin */
     // GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource4);
@@ -127,33 +117,13 @@ void at86rf231_gpio_spi_interrupts_init(void)
     /* Configure EXTI4 line */
     enable_exti_interrupt();
 
-    /* Enable and set EXTI4 Interrupt to the lowest priority */
-    // NVIC_InitStructure.NVIC_IRQChannel = EXTI4_IRQn;
-    // NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x01;
-    // NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0F;
-    // NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    // NVIC_Init(&NVIC_InitStructure);
-
-    /* Init GPIOs */
-
-    /* CS & SLEEP */
-    // RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-
-    // GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_4;
-    // GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    // GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    // GPIO_Init(GPIOA, &GPIO_InitStructure);
-    gpio_init_out(GPIO_2, GPIO_NOPULL);
-    gpio_init_out(GPIO_4, GPIO_NOPULL);
-
+    /* CS */
+    gpio_init_out(SPI_0_CS_GPIO, GPIO_NOPULL);
+    /* SLEEP */
+    gpio_init_out(SPI_0_SLEEP_GPIO, GPIO_NOPULL);
     /* RESET */
-    // RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+    gpio_init_out(SPI_0_RESET_GPIO, GPIO_NOPULL);
 
-    // GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
-    // GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    // GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    // GPIO_Init(GPIOC, &GPIO_InitStructure);
-    gpio_init_out(GPIO_1, GPIO_NOPULL);
 }
 
 void at86rf231_reset(void)
@@ -186,7 +156,7 @@ void at86rf231_reset(void)
         vtimer_usleep(10);
 
         if (!--max_wait) {
-            printf("at86rf231 : ERROR : could not enter TRX_OFF mode");
+            printf("at86rf231 : ERROR : could not enter TRX_OFF mode\n");
             break;
         }
     }
@@ -216,10 +186,8 @@ __attribute__((naked))
 void isr_exti4(void)
 {
     ISR_ENTER();
-
-    // if (EXTI_GetITStatus(EXTI_Line4) != RESET) {
-    //     /* IRQ_3 (TRX_END), read Frame Buffer */
-    //     EXTI_ClearITPendingBit(EXTI_Line4);
+    if (EXTI->IMR & (1<<GPIO_11_EXTI_LINE) && EXTI->PR & (1<<GPIO_11_EXTI_LINE)) {
+        EXTI->PR = (1<<GPIO_11_EXTI_LINE);
 
         at86rf231_rx_irq();
 
@@ -227,7 +195,7 @@ void isr_exti4(void)
             /* scheduler */
             thread_yield();
         }
-    // }
+    }
 
     ISR_EXIT();
 }

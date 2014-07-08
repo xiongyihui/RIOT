@@ -79,7 +79,7 @@ void at86rf231_switch_to_rx(void)
         vtimer_usleep(10);
 
         if (!--max_wait) {
-            printf("at86rf231 : ERROR : could not enter RX_ON mode");
+            printf("at86rf231 : ERROR : could not enter RX_ON mode\n");
             break;
         }
     }
