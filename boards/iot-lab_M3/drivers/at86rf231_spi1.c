@@ -9,14 +9,8 @@
  * @author Thomas Eichinger <thomas.eichinger@fu-berlin.de>
  */
 
-#include <stdio.h>
-#include <stddef.h>
-
 #include "cpu.h"
-#include "periph/gpio.h"
 #include "spi.h"
-#include "periph_conf.h"
-#include "at86rf231_spi1.h"
 
 /*
 SPI1
@@ -31,12 +25,6 @@ GPIO
   Reset : PC1 : active low, enable chip
   SLEEP : PA2 : control sleep, tx & rx state
 */
-
-
-void at86rf231_spi1_init(void)
-{
-    spi_init_master(SPI_0, SPI_CONF_FIRST_RISING, 4500000);
-}
 
 uint8_t at86rf231_spi_transfer_byte(uint8_t byte)
 {

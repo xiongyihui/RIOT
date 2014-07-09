@@ -10,7 +10,6 @@
  */
 
 #include <stdio.h>
-#include <stddef.h>
 
 #include "cpu.h"
 #include "sched.h"
@@ -18,13 +17,11 @@
 
 #include "arch/thread_arch.h"
 #include "periph/gpio.h"
-#include "periph_conf.h"
 #include "spi.h"
-#include "board.h"
+#include "periph_conf.h"
 
 #include "at86rf231.h"
 #include "at86rf231_spi.h"
-#include "at86rf231_spi1.h"
 
 /*
 SPI1
@@ -89,8 +86,8 @@ void at86rf231_gpio_spi_interrupts_init(void)
     /* MISO */
     gpio_init_in(SPI_0_MISO_GPIO, GPIO_NOPULL);
 
-    /* SPI1 init */
-    at86rf231_spi1_init();
+    /* SPI init */
+    spi_init_master(SPI_0, SPI_CONF_FIRST_RISING, 4500000);
 
     spi_poweron(SPI_0);
 
