@@ -267,5 +267,14 @@
 #define SPI_0_SLEEP_PIN     GPIO_14_PIN
 #define SPI_0_SLEEP_PORT    GPIO_14_PORT
 
+#define SPI_2_LINES_FULL_DUPLEX     (0x0000)
+#define SPI_MASTER_MODE             (0x0104)
+#define SPI_DATA_SIZE_8B            (0x0000)
+#define SPI_CPOL_LOW                (0x0000)
+#define SPI_CPHA_1_EDGE             (0x0000)
+#define SPI_NSS_SOFT                (0x0200)
+#define SPI_BR_PRESCALER_16         (0x0018)
+#define SPI_1ST_BIT_MSB             (0x0000)
+
 #endif /* __PERIPH_CONF_H */
 /** @} */

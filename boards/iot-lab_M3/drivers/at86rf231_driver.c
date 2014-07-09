@@ -40,23 +40,23 @@ GPIO
   SLEEP : PA2 : control sleep, tx & rx state
 */
 
-inline static void RESET_CLR(void)
+static inline void RESET_CLR(void)
 {
     SPI_0_RESET_PORT->BRR = (1 << SPI_0_RESET_PIN);
 }
-inline static void RESET_SET(void)
+static inline void RESET_SET(void)
 {
     SPI_0_RESET_PORT->BSRR = (1 << SPI_0_RESET_PIN);
 }
-inline static void CSn_SET(void)
+static inline void CSn_SET(void)
 {
     SPI_0_CS_PORT->BSRR = (1 << SPI_0_CS_PIN);
 }
-inline static void CSn_CLR(void)
+static inline void CSn_CLR(void)
 {
     SPI_0_CS_PORT->BRR = (1 << SPI_0_CS_PIN);
 }
-inline static void SLEEP_CLR(void)
+static inline void SLEEP_CLR(void)
 {
     SPI_0_SLEEP_PORT->BRR = (1 << SPI_0_SLEEP_PIN);
 }
@@ -68,14 +68,12 @@ uint8_t at86rf231_get_status(void)
 }
 
 
-static
-void enable_exti_interrupt(void)
+static void enable_exti_interrupt(void)
 {
     gpio_irq_enable(SPI_0_IRQ0_GPIO);
 }
 
-static
-void disable_exti_interrupt(void)
+static void disable_exti_interrupt(void)
 {
     gpio_irq_disable(SPI_0_IRQ0_GPIO);
 }
@@ -145,14 +143,15 @@ void at86rf231_reset(void)
             printf("at86rf231 : ERROR : could not enter TRX_OFF mode\n");
             break;
         }
-    }
-    while ((status & AT86RF231_TRX_STATUS_MASK__TRX_STATUS) != AT86RF231_TRX_STATUS__TRX_OFF);
+    } while ((status & AT86RF231_TRX_STATUS_MASK__TRX_STATUS)
+             != AT86RF231_TRX_STATUS__TRX_OFF);
 }
 
 void at86rf231_spi_select(void)
 {
     CSn_CLR();
 }
+
 void at86rf231_spi_unselect(void)
 {
     CSn_SET();
@@ -162,6 +161,7 @@ void at86rf231_enable_interrupts(void)
 {
     enable_exti_interrupt();
 }
+
 void at86rf231_disable_interrupts(void)
 {
     disable_exti_interrupt();

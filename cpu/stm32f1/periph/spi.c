@@ -35,14 +35,14 @@ int spi_init_master(spi_t dev, spi_conf_t conf, uint32_t speed)
     uint16_t tmp = SPIx->CR1;
     tmp &= 0x3040;  /* reset value */
 
-    tmp |= 0x0000;  /* SPI 2 lines full duplex */
-    tmp |= 0x0104;  /* SPI master mode */
-    tmp |= 0x0000;  /* Data size 8b */
-    tmp |= 0x0000;  /* CPOL low */
-    tmp |= 0x0000;  /* CPHA 1 edge */
-    tmp |= 0x0200;  /* NSS soft */
-    tmp |= 0x0018;  /* BR prescaler 16 */
-    tmp |= 0x0000;  /* 1st Bit MSB */
+    tmp |= SPI_2_LINES_FULL_DUPLEX;
+    tmp |= SPI_MASTER_MODE;
+    tmp |= SPI_DATA_SIZE_8B;
+    tmp |= SPI_CPOL_LOW;
+    tmp |= SPI_CPHA_1_EDGE;
+    tmp |= SPI_NSS_SOFT;
+    tmp |= SPI_BR_PRESCALER_16;
+    tmp |= SPI_1ST_BIT_MSB;
 
     SPIx->CR1 = tmp;
     SPIx->I2SCFGR &= 0xF7FF;     /* select SPI mode */
@@ -96,7 +96,7 @@ int spi_transfer_bytes(spi_t dev, char *out, char *in, int length)
     int transfered = 0;
     int ret = 0;
 
-    if (out != 0) {
+    if (out != NULL) {
         DEBUG("out*: %p out: %x length: %x\n", out, *out, length);
         while (length--) {
             ret += spi_transfer_byte(dev, *(out)++, 0);
@@ -106,7 +106,7 @@ int spi_transfer_bytes(spi_t dev, char *out, char *in, int length)
             transfered += ret;
         }
     }
-    if (in != 0) {
+    if (in != NULL) {
         while (length--) {
             ret += spi_transfer_byte(dev, 0, in++);
             if (ret <  0) {

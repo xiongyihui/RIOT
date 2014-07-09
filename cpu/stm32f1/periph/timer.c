@@ -41,7 +41,7 @@ typedef struct {
 /**
  * Timer state memory
  */
-timer_conf_t config[TIMER_NUMOF];
+static timer_conf_t config[TIMER_NUMOF];
 
 
 
