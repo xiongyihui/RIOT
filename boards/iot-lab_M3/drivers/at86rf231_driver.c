@@ -68,7 +68,6 @@ uint8_t at86rf231_get_status(void)
 }
 
 
-extern void at86rf231_rx_irq(void);
 static
 void enable_exti_interrupt(void)
 {

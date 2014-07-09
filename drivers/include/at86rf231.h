@@ -34,6 +34,7 @@ void at86rf231_init(int tpid);
 //void at86rf231_reset(void);
 void at86rf231_rx(void);
 void at86rf231_rx_handler(void);
+void at86rf231_rx_irq(void);
 
 int16_t at86rf231_send(at86rf231_packet_t *packet);
 
