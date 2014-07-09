@@ -86,16 +86,16 @@ int spi_transfer_byte(spi_t dev, char out, char *in)
             return -1;
     }
 
-
     while ((SPI_dev->SR & SPI_SR_TXE) == RESET);
     SPI_dev->DR = out;
-    transfered += (out)?1:0;
+    transfered += (out) ? 1 : 0;
 
     while ((SPI_dev->SR & SPI_SR_RXNE) == RESET);
     *in = SPI_dev->DR;
-    transfered += (*in)?1:0;
+    transfered += (*in) ? 1 : 0;
 
     while ((SPI_dev->SR & 0x80) == 1);
+
     DEBUG("\nout: %x in: %x transfered: %x\n", out, *in, transfered);
 
     return transfered;
@@ -126,17 +126,20 @@ int spi_transfer_bytes(spi_t dev, char *out, char *in, int length)
         }
         DEBUG("in*: %p in: %x transfered: %x\n", in, *(in-transfered), transfered);
     }
+
     DEBUG("sent %x byte(s)\n", transfered);
     return transfered;
 }
 
 int spi_transfer_reg(spi_t dev, uint8_t reg, char *out, char *in)
 {
+    /* TODO */
     return -1;
 }
 
 int spi_transfer_regs(spi_t dev, uint8_t reg, char *out, char *in, int length)
 {
+    /* TODO */
     return -1;
 }
 

@@ -52,23 +52,23 @@ GPIO
 
 inline static void RESET_CLR(void)
 {
-    SPI_0_RESET_PORT->BRR = 1 << SPI_0_RESET_PIN;
+    SPI_0_RESET_PORT->BRR = (1 << SPI_0_RESET_PIN);
 }
 inline static void RESET_SET(void)
 {
-    SPI_0_RESET_PORT->BSRR = 1 << SPI_0_RESET_PIN;
+    SPI_0_RESET_PORT->BSRR = (1 << SPI_0_RESET_PIN);
 }
 inline static void CSn_SET(void)
 {
-    SPI_0_CS_PORT->BSRR = 1 << SPI_0_CS_PIN;
+    SPI_0_CS_PORT->BSRR = (1 << SPI_0_CS_PIN);
 }
 inline static void CSn_CLR(void)
 {
-    SPI_0_CS_PORT->BRR = 1 << SPI_0_CS_PIN;
+    SPI_0_CS_PORT->BRR = (1 << SPI_0_CS_PIN);
 }
 inline static void SLEEP_CLR(void)
 {
-    SPI_0_SLEEP_PORT->BRR = 1 << SPI_0_SLEEP_PIN;
+    SPI_0_SLEEP_PORT->BRR = (1 << SPI_0_SLEEP_PIN);
 }
 
 uint8_t at86rf231_get_status(void)
@@ -112,9 +112,6 @@ void at86rf231_gpio_spi_interrupts_init(void)
     gpio_init_int(SPI_0_IRQ0_GPIO, GPIO_NOPULL, GPIO_RISING, at86rf231_rx_irq);
 
     /* Connect EXTI4 Line to PC4 pin */
-    // GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource4);
-
-    /* Configure EXTI4 line */
     enable_exti_interrupt();
 
     /* CS */
@@ -181,7 +178,6 @@ void at86rf231_disable_interrupts(void)
     disable_exti_interrupt();
 }
 
-extern void at86rf231_rx_irq(void);
 __attribute__((naked))
 void isr_exti4(void)
 {

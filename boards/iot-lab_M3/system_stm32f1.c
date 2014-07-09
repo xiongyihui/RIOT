@@ -28,7 +28,7 @@ uint32_t SystemCoreClock = F_CPU;
 
 __I uint8_t AHBPrescTable[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
 
-static void SetSysClock(void)
+static void set_system_clock(void)
 {
     __IO uint32_t StartUpCounter = 0, HSEStatus = 0;
 
@@ -123,7 +123,7 @@ void SystemInit(void)
 
     /* Configure the System clock frequency, HCLK, PCLK2 and PCLK1 prescalers */
     /* Configure the Flash Latency cycles and enable prefetch buffer */
-    SetSysClock();
+    set_system_clock();
 
     /* Vector Table Relocation in Internal FLASH. */
     SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET;

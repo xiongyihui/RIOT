@@ -300,7 +300,6 @@ int gpio_init_in(gpio_t dev, gpio_pp_t pullup)
             pin = GPIO_15_PIN;
             break;
 #endif
-
         case GPIO_UNDEFINED:
         default:
             return -1;
@@ -323,8 +322,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
     int res;
     uint32_t pin;
     uint8_t exti_line;
-
-    (void)pin;
 
     /* configure pin as input */
     res = gpio_init_in(dev, pullup);
@@ -1025,7 +1022,8 @@ int gpio_toggle(gpio_t dev)
 {
     if (gpio_read(dev)) {
         return gpio_clear(dev);
-    } else {
+    }
+    else {
         return gpio_set(dev);
     }
 }
@@ -1034,7 +1032,8 @@ int gpio_write(gpio_t dev, int value)
 {
     if (value) {
         return gpio_set(dev);
-    } else {
+    }
+    else {
         return gpio_clear(dev);
     }
 }
