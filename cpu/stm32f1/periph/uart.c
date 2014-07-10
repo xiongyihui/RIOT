@@ -96,7 +96,7 @@ int uart_init_blocking(uart_t uart, uint32_t baudrate)
 {
     USART_TypeDef *dev;
     GPIO_TypeDef *port;
-    uint32_t rx_pin, tx_pin;
+    uint32_t rx_pin, tx_pin, bus_freq;
     float divider;
     uint16_t mantissa;
     uint8_t fraction;
@@ -109,6 +109,7 @@ int uart_init_blocking(uart_t uart, uint32_t baudrate)
             port = UART_0_PORT;
             rx_pin = UART_0_RX_PIN;
             tx_pin = UART_0_TX_PIN;
+            bus_freq = UART_0_BUS_FREQ;
             /* enable clocks */
             UART_0_CLKEN();
             UART_0_PORT_CLKEN();
@@ -120,6 +121,7 @@ int uart_init_blocking(uart_t uart, uint32_t baudrate)
             port = UART_1_PORT;
             tx_pin = UART_1_TX_PIN;
             rx_pin = UART_1_RX_PIN;
+            bus_freq = UART_1_BUS_FREQ;
             /* enable clocks */
             UART_1_CLKEN();
             UART_1_PORT_CLKEN();
@@ -149,7 +151,7 @@ int uart_init_blocking(uart_t uart, uint32_t baudrate)
     }
 
     /* configure UART to mode 8N1 with given baudrate */
-    divider = ((float)F_CPU) / (16 * baudrate);
+    divider = ((float)bus_freq) / (16 * baudrate);
     mantissa = (uint16_t)floorf(divider);
     fraction = (uint8_t)floorf((divider - mantissa) * 16);
     dev->BRR = 0;

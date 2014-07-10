@@ -60,6 +60,7 @@
 #define UART_0_CLKEN()      (RCC->APB2ENR |= RCC_APB2ENR_USART1EN)
 #define UART_0_IRQ          USART1_IRQn
 #define UART_0_ISR          isr_usart1
+#define UART_0_BUS_FREQ     72000000
 /* UART 0 pin configuration */
 #define UART_0_PORT         GPIOA
 #define UART_0_PORT_CLKEN() (RCC->APB2ENR |= RCC_APB2ENR_IOPAEN)
@@ -72,6 +73,7 @@
 #define UART_1_CLKEN()      (RCC->APB1ENR |= RCC_APB1ENR_USART2EN)
 #define UART_1_IRQ          USART2_IRQn
 #define UART_1_ISR          isr_usart2
+#define UART_1_BUS_FREQ     36000000
 /* UART 1 pin configuration */
 #define UART_1_PORT         GPIOA
 #define UART_1_PORT_CLKEN() (RCC->APB2ENR |= RCC_APB2ENR_IOPAEN)
