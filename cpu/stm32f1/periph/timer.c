@@ -126,6 +126,7 @@ int timer_set_absolute(tim_t dev, int channel, unsigned int value)
             timer->CCR1 = value;
             timer->SR &= ~TIM_SR_CC1IF;
             timer->DIER |= TIM_DIER_CC1IE;
+            DEBUG("Timer 1 set to %x\n", value);
             break;
         case 1:
             timer->CCR2 = value;
@@ -317,6 +318,11 @@ __attribute__ ((naked)) void TIMER_1_ISR(void)
 
 static inline void irq_handler(tim_t timer, TIM_TypeDef *dev)
 {
+    if (dev->SR & TIM_SR_UIF) {
+        DEBUG("Overflow.\n");
+        dev->SR &= ~(TIM_SR_UIF|TIM_SR_CC1IF|TIM_SR_CC2IF|TIM_SR_CC3IF|TIM_SR_CC4IF);
+        return;
+    }
     if (dev->SR & TIM_SR_CC1IF) {
         DEBUG("1\n");
         dev->DIER &= ~TIM_DIER_CC1IE;
@@ -329,6 +335,7 @@ static inline void irq_handler(tim_t timer, TIM_TypeDef *dev)
         dev->DIER &= ~TIM_DIER_CC2IE;
         dev->SR &= ~TIM_SR_CC2IF;
         config[timer].cb(1);
+        DEBUG("-2\n");
     }
     else if (dev->SR & TIM_SR_CC3IF) {
         DEBUG("3\n");
