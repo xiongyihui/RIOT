@@ -81,8 +81,13 @@ int spi_transfer_byte(spi_t dev, char out, char *in)
     transfered += (out) ? 1 : 0;
 
     while ((SPI_dev->SR & SPI_SR_RXNE) == RESET);
-    *in = SPI_dev->DR;
-    transfered += (*in) ? 1 : 0;
+    if (in != NULL) {
+        *in = SPI_dev->DR;
+        transfered += (*in) ? 1 : 0;
+    }
+    else {
+        SPI_dev->DR;
+    }
 
     while ((SPI_dev->SR & 0x80) == 1);
 
