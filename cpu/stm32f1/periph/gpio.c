@@ -310,7 +310,6 @@ int gpio_init_in(gpio_t dev, gpio_pp_t pullup)
 int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(void))
 {
     int res;
-    uint32_t pin;
     uint8_t exti_line;
 
     /* configure pin as input */
@@ -331,7 +330,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
     switch (dev) {
 #ifdef GPIO_0_EN
         case GPIO_0:
-            pin = GPIO_0_PIN;
             exti_line = GPIO_0_EXTI_LINE;
             GPIO_0_EXTI_CFG();
             NVIC_SetPriority(GPIO_0_IRQ, GPIO_IRQ_PRIO);
@@ -340,7 +338,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #endif
 #ifdef GPIO_1_EN
         case GPIO_1:
-            pin = GPIO_1_PIN;
             exti_line = GPIO_1_EXTI_LINE;
             GPIO_1_EXTI_CFG();
             NVIC_SetPriority(GPIO_1_IRQ, GPIO_IRQ_PRIO);
@@ -349,7 +346,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #endif
 #ifdef GPIO_2_EN
         case GPIO_2:
-            pin = GPIO_2_PIN;
             exti_line = GPIO_2_EXTI_LINE;
             GPIO_2_EXTI_CFG();
             NVIC_SetPriority(GPIO_2_IRQ, GPIO_IRQ_PRIO);
@@ -358,7 +354,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #endif
 #ifdef GPIO_3_EN
         case GPIO_3:
-            pin = GPIO_3_PIN;
             exti_line = GPIO_3_EXTI_LINE;
             GPIO_3_EXTI_CFG();
             NVIC_SetPriority(GPIO_3_IRQ, GPIO_IRQ_PRIO);
@@ -367,7 +362,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #endif
 #ifdef GPIO_4_EN
         case GPIO_4:
-            pin = GPIO_4_PIN;
             exti_line = GPIO_4_EXTI_LINE;
             GPIO_4_EXTI_CFG();
             NVIC_SetPriority(GPIO_4_IRQ, GPIO_IRQ_PRIO);
@@ -376,7 +370,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #endif
 #ifdef GPIO_5_EN
         case GPIO_5:
-            pin = GPIO_5_PIN;
             exti_line = GPIO_5_EXTI_LINE;
             GPIO_5_EXTI_CFG();
             NVIC_SetPriority(GPIO_5_IRQ, GPIO_IRQ_PRIO);
@@ -385,7 +378,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #endif
 #ifdef GPIO_6_EN
         case GPIO_6:
-            pin = GPIO_6_PIN;
             exti_line = GPIO_6_EXTI_LINE;
             GPIO_6_EXTI_CFG();
             NVIC_SetPriority(GPIO_6_IRQ, GPIO_IRQ_PRIO);
@@ -394,7 +386,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #endif
 #ifdef GPIO_7_EN
         case GPIO_7:
-            pin = GPIO_7_PIN;
             exti_line = GPIO_7_EXTI_LINE;
             GPIO_7_EXTI_CFG();
             NVIC_SetPriority(GPIO_7_IRQ, GPIO_IRQ_PRIO);
@@ -403,7 +394,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #endif
 #ifdef GPIO_8_EN
         case GPIO_8:
-            pin = GPIO_8_PIN;
             exti_line = GPIO_8_EXTI_LINE;
             GPIO_8_EXTI_CFG();
             NVIC_SetPriority(GPIO_8_IRQ, GPIO_IRQ_PRIO);
@@ -412,7 +402,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #endif
 #ifdef GPIO_9_EN
         case GPIO_9:
-            pin = GPIO_9_PIN;
             exti_line = GPIO_9_EXTI_LINE;
             GPIO_9_EXTI_CFG();
             NVIC_SetPriority(GPIO_9_IRQ, GPIO_IRQ_PRIO);
@@ -421,7 +410,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #endif
 #ifdef GPIO_10_EN
         case GPIO_10:
-            pin = GPIO_10_PIN;
             exti_line = GPIO_10_EXTI_LINE;
             GPIO_10_EXTI_CFG();
             NVIC_SetPriority(GPIO_10_IRQ, GPIO_IRQ_PRIO);
@@ -430,7 +418,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #endif
 #ifdef GPIO_11_EN
         case GPIO_11:
-            pin = GPIO_11_PIN;
             exti_line = GPIO_11_EXTI_LINE;
             GPIO_11_EXTI_CFG();
             NVIC_SetPriority(GPIO_11_IRQ, GPIO_IRQ_PRIO);
@@ -439,7 +426,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #endif
 #ifdef GPIO_12_EN
         case GPIO_12:
-            pin = GPIO_12_PIN;
             exti_line = GPIO_12_EXTI_LINE;
             GPIO_12_EXTI_CFG();
             NVIC_SetPriority(GPIO_12_IRQ, GPIO_IRQ_PRIO);
@@ -448,7 +434,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #endif
 #ifdef GPIO_13_EN
         case GPIO_13:
-            pin = GPIO_13_PIN;
             exti_line = GPIO_13_EXTI_LINE;
             GPIO_13_EXTI_CFG();
             NVIC_SetPriority(GPIO_13_IRQ, GPIO_IRQ_PRIO);
@@ -457,7 +442,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #endif
 #ifdef GPIO_14_EN
         case GPIO_14:
-            pin = GPIO_14_PIN;
             exti_line = GPIO_14_EXTI_LINE;
             GPIO_14_EXTI_CFG();
             NVIC_SetPriority(GPIO_14_IRQ, GPIO_IRQ_PRIO);
@@ -466,7 +450,6 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #endif
 #ifdef GPIO_15_EN
         case GPIO_15:
-            pin = GPIO_15_PIN;
             exti_line = GPIO_15_EXTI_LINE;
             GPIO_15_EXTI_CFG();
             NVIC_SetPriority(GPIO_15_IRQ, GPIO_IRQ_PRIO);
