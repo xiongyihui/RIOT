@@ -16,11 +16,9 @@ uint32_t SystemCoreClock = F_CPU;
 
 #define VECT_TAB_OFFSET  0x0
 
-__I uint8_t AHBPrescTable[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
-
 static void set_system_clock(void)
 {
-    __IO uint32_t StartUpCounter = 0, HSEStatus = 0;
+    volatile uint32_t startup_counter = 0, HSE_status = 0;
 
     /* SYSCLK, HCLK, PCLK2 and PCLK1 configuration */
     /* Enable HSE */
@@ -28,19 +26,19 @@ static void set_system_clock(void)
 
     /* Wait till HSE is ready and if Time out is reached exit */
     do {
-        HSEStatus = RCC->CR & RCC_CR_HSERDY;
-        StartUpCounter++;
+        HSE_status = RCC->CR & RCC_CR_HSERDY;
+        startup_counter++;
     }
-    while ((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
+    while ((HSE_status == 0) && (startup_counter != HSE_STARTUP_TIMEOUT));
 
     if ((RCC->CR & RCC_CR_HSERDY) != RESET) {
-        HSEStatus = (uint32_t)0x01;
+        HSE_status = (uint32_t)0x01;
     }
     else {
-        HSEStatus = (uint32_t)0x00;
+        HSE_status = (uint32_t)0x00;
     }
 
-    if (HSEStatus == (uint32_t)0x01) {
+    if (HSE_status == (uint32_t)0x01) {
         /* Enable Prefetch Buffer */
         FLASH->ACR |= FLASH_ACR_PRFTBE;
 
