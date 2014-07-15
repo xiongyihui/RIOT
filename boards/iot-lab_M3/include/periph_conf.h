@@ -24,7 +24,7 @@
  */
 #define TIMER_NUMOF         (2U)
 #define TIMER_0_EN          1
-#define TIMER_1_EN          2
+#define TIMER_1_EN          1
 
 /* Timer 0 configuration */
 #define TIMER_0_DEV         TIM2

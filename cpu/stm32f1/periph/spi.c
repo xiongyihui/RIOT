@@ -15,6 +15,7 @@
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
+/* TODO: parse and use conf and speed parameter */
 int spi_init_master(spi_t dev, spi_conf_t conf, uint32_t speed)
 {
     SPI_TypeDef *SPIx;

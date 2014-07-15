@@ -43,8 +43,6 @@ typedef struct {
  */
 static timer_conf_t config[TIMER_NUMOF];
 
-
-
 int timer_init(tim_t dev, unsigned int ticks_per_us, void (*callback)(int))
 {
     TIM_TypeDef *timer;
