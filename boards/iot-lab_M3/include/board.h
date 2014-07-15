@@ -75,8 +75,6 @@
 #define LED_ORANGE_TOGGLE   (LED_ORANGE_PORT->ODR ^= (1<<LED_ORANGE_PIN))
 /** @} */
 
-#define LED_GPIO_OUT_50MHZ  (0x3)
-
 /**
  * Define the type for the radio packet length for the transceiver
  */
