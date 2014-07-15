@@ -94,5 +94,8 @@ endif
 ifneq (,$(filter color,$(USEMODULE)))
     DIRS += color
 endif
+ifneq (,$(filter openwsn,$(USEMODULE)))
+    DIRS += net/openwsn
+endif
 
 include $(RIOTBASE)/Makefile.base
