@@ -116,7 +116,7 @@
 #define GPIO_IRQ_9          GPIO_0                  /* not configured */
 #define GPIO_IRQ_10         GPIO_6
 #define GPIO_IRQ_11         GPIO_7
-#define GPIO_IRQ_12         GPIO_8
+#define GPIO_IRQ_12         GPIO_4
 #define GPIO_IRQ_13         GPIO_9
 #define GPIO_IRQ_14         GPIO_10
 #define GPIO_IRQ_15         GPIO_11

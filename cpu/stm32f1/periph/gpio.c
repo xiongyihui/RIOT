@@ -25,6 +25,8 @@
 #include "periph_conf.h"
 #include "board.h"
 
+#include "thread.h"
+
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
@@ -311,6 +313,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 {
     int res;
     uint8_t exti_line;
+    uint8_t gpio_irq;
 
     /* configure pin as input */
     res = gpio_init_in(dev, pullup);
@@ -331,6 +334,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #ifdef GPIO_0_EN
         case GPIO_0:
             exti_line = GPIO_0_EXTI_LINE;
+            gpio_irq = GPIO_IRQ_0;
             GPIO_0_EXTI_CFG();
             NVIC_SetPriority(GPIO_0_IRQ, GPIO_IRQ_PRIO);
             NVIC_EnableIRQ(GPIO_0_IRQ);
@@ -339,6 +343,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #ifdef GPIO_1_EN
         case GPIO_1:
             exti_line = GPIO_1_EXTI_LINE;
+            gpio_irq = GPIO_IRQ_1;
             GPIO_1_EXTI_CFG();
             NVIC_SetPriority(GPIO_1_IRQ, GPIO_IRQ_PRIO);
             NVIC_EnableIRQ(GPIO_1_IRQ);
@@ -347,6 +352,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #ifdef GPIO_2_EN
         case GPIO_2:
             exti_line = GPIO_2_EXTI_LINE;
+            gpio_irq = GPIO_IRQ_2;
             GPIO_2_EXTI_CFG();
             NVIC_SetPriority(GPIO_2_IRQ, GPIO_IRQ_PRIO);
             NVIC_EnableIRQ(GPIO_2_IRQ);
@@ -355,6 +361,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #ifdef GPIO_3_EN
         case GPIO_3:
             exti_line = GPIO_3_EXTI_LINE;
+            gpio_irq = GPIO_IRQ_3;
             GPIO_3_EXTI_CFG();
             NVIC_SetPriority(GPIO_3_IRQ, GPIO_IRQ_PRIO);
             NVIC_EnableIRQ(GPIO_3_IRQ);
@@ -363,6 +370,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #ifdef GPIO_4_EN
         case GPIO_4:
             exti_line = GPIO_4_EXTI_LINE;
+            gpio_irq = GPIO_IRQ_4;
             GPIO_4_EXTI_CFG();
             NVIC_SetPriority(GPIO_4_IRQ, GPIO_IRQ_PRIO);
             NVIC_EnableIRQ(GPIO_4_IRQ);
@@ -371,6 +379,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #ifdef GPIO_5_EN
         case GPIO_5:
             exti_line = GPIO_5_EXTI_LINE;
+            gpio_irq = GPIO_IRQ_5;
             GPIO_5_EXTI_CFG();
             NVIC_SetPriority(GPIO_5_IRQ, GPIO_IRQ_PRIO);
             NVIC_EnableIRQ(GPIO_5_IRQ);
@@ -379,6 +388,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #ifdef GPIO_6_EN
         case GPIO_6:
             exti_line = GPIO_6_EXTI_LINE;
+            gpio_irq = GPIO_IRQ_6;
             GPIO_6_EXTI_CFG();
             NVIC_SetPriority(GPIO_6_IRQ, GPIO_IRQ_PRIO);
             NVIC_EnableIRQ(GPIO_6_IRQ);
@@ -387,6 +397,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #ifdef GPIO_7_EN
         case GPIO_7:
             exti_line = GPIO_7_EXTI_LINE;
+            gpio_irq = GPIO_IRQ_7;
             GPIO_7_EXTI_CFG();
             NVIC_SetPriority(GPIO_7_IRQ, GPIO_IRQ_PRIO);
             NVIC_EnableIRQ(GPIO_7_IRQ);
@@ -395,6 +406,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #ifdef GPIO_8_EN
         case GPIO_8:
             exti_line = GPIO_8_EXTI_LINE;
+            gpio_irq = GPIO_IRQ_8;
             GPIO_8_EXTI_CFG();
             NVIC_SetPriority(GPIO_8_IRQ, GPIO_IRQ_PRIO);
             NVIC_EnableIRQ(GPIO_8_IRQ);
@@ -403,6 +415,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #ifdef GPIO_9_EN
         case GPIO_9:
             exti_line = GPIO_9_EXTI_LINE;
+            gpio_irq = GPIO_IRQ_9;
             GPIO_9_EXTI_CFG();
             NVIC_SetPriority(GPIO_9_IRQ, GPIO_IRQ_PRIO);
             NVIC_EnableIRQ(GPIO_9_IRQ);
@@ -411,6 +424,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #ifdef GPIO_10_EN
         case GPIO_10:
             exti_line = GPIO_10_EXTI_LINE;
+            gpio_irq = GPIO_IRQ_10;
             GPIO_10_EXTI_CFG();
             NVIC_SetPriority(GPIO_10_IRQ, GPIO_IRQ_PRIO);
             NVIC_EnableIRQ(GPIO_10_IRQ);
@@ -419,6 +433,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #ifdef GPIO_11_EN
         case GPIO_11:
             exti_line = GPIO_11_EXTI_LINE;
+            gpio_irq = GPIO_IRQ_11;
             GPIO_11_EXTI_CFG();
             NVIC_SetPriority(GPIO_11_IRQ, GPIO_IRQ_PRIO);
             NVIC_EnableIRQ(GPIO_11_IRQ);
@@ -427,6 +442,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #ifdef GPIO_12_EN
         case GPIO_12:
             exti_line = GPIO_12_EXTI_LINE;
+            gpio_irq = GPIO_IRQ_12;
             GPIO_12_EXTI_CFG();
             NVIC_SetPriority(GPIO_12_IRQ, GPIO_IRQ_PRIO);
             NVIC_EnableIRQ(GPIO_12_IRQ);
@@ -435,6 +451,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #ifdef GPIO_13_EN
         case GPIO_13:
             exti_line = GPIO_13_EXTI_LINE;
+            gpio_irq = GPIO_IRQ_13;
             GPIO_13_EXTI_CFG();
             NVIC_SetPriority(GPIO_13_IRQ, GPIO_IRQ_PRIO);
             NVIC_EnableIRQ(GPIO_13_IRQ);
@@ -443,6 +460,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #ifdef GPIO_14_EN
         case GPIO_14:
             exti_line = GPIO_14_EXTI_LINE;
+            gpio_irq = GPIO_IRQ_14;
             GPIO_14_EXTI_CFG();
             NVIC_SetPriority(GPIO_14_IRQ, GPIO_IRQ_PRIO);
             NVIC_EnableIRQ(GPIO_14_IRQ);
@@ -451,6 +469,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
 #ifdef GPIO_15_EN
         case GPIO_15:
             exti_line = GPIO_15_EXTI_LINE;
+            gpio_irq = GPIO_IRQ_15;
             GPIO_15_EXTI_CFG();
             NVIC_SetPriority(GPIO_15_IRQ, GPIO_IRQ_PRIO);
             NVIC_EnableIRQ(GPIO_15_IRQ);
@@ -462,7 +481,7 @@ int gpio_init_int(gpio_t dev, gpio_pp_t pullup, gpio_flank_t flank, void (*cb)(v
     }
 
     /* set callback */
-    config[dev].cb = cb;
+    config[gpio_irq].cb = cb;
 
     /* configure the event that triggers an interrupt */
     switch (flank) {
@@ -1011,42 +1030,80 @@ int gpio_write(gpio_t dev, int value)
     }
 }
 
-__attribute__((naked)) void isr_exti0_1(void)
+__attribute__((naked)) void isr_exti0(void)
 {
     ISR_ENTER();
     if (EXTI->PR & EXTI_PR_PR0) {
         EXTI->PR |= EXTI_PR_PR0;        /* clear status bit by writing a 1 to it */
         config[GPIO_IRQ_0].cb();
     }
-    else if (EXTI->PR & EXTI_PR_PR1) {
-        EXTI->PR |= EXTI_PR_PR1;        /* clear status bit by writing a 1 to it */
-        config[GPIO_IRQ_1].cb();
+
+    if (sched_context_switch_request) {
+        thread_yield();
     }
     ISR_EXIT();
 }
 
-__attribute__((naked)) void isr_exti2_3(void)
+__attribute__((naked)) void isr_exti1(void)
+{
+    ISR_ENTER();
+    if (EXTI->PR & EXTI_PR_PR1) {
+        EXTI->PR |= EXTI_PR_PR1;        /* clear status bit by writing a 1 to it */
+        config[GPIO_IRQ_1].cb();
+    }
+
+    if (sched_context_switch_request) {
+        thread_yield();
+    }
+    ISR_EXIT();
+}
+
+__attribute__((naked)) void isr_exti2(void)
 {
     ISR_ENTER();
     if (EXTI->PR & EXTI_PR_PR2) {
         EXTI->PR |= EXTI_PR_PR2;        /* clear status bit by writing a 1 to it */
         config[GPIO_IRQ_2].cb();
     }
-    else if (EXTI->PR & EXTI_PR_PR3) {
-        EXTI->PR |= EXTI_PR_PR3;        /* clear status bit by writing a 1 to it */
-        config[GPIO_IRQ_3].cb();
+
+    if (sched_context_switch_request) {
+        thread_yield();
     }
     ISR_EXIT();
 }
 
-__attribute__((naked)) void isr_exti4_15(void)
+__attribute__((naked)) void isr_exti3(void)
+{
+    ISR_ENTER();
+    if (EXTI->PR & EXTI_PR_PR3) {
+        EXTI->PR |= EXTI_PR_PR3;        /* clear status bit by writing a 1 to it */
+        config[GPIO_IRQ_3].cb();
+    }
+
+    if (sched_context_switch_request) {
+        thread_yield();
+    }
+    ISR_EXIT();
+}
+
+__attribute__((naked)) void isr_exti4(void)
 {
     ISR_ENTER();
     if (EXTI->PR & EXTI_PR_PR4) {
         EXTI->PR |= EXTI_PR_PR4;        /* clear status bit by writing a 1 to it */
         config[GPIO_IRQ_4].cb();
     }
-    else if (EXTI->PR & EXTI_PR_PR5) {
+
+    if (sched_context_switch_request) {
+        thread_yield();
+    }
+    ISR_EXIT();
+}
+
+__attribute__((naked)) void isr_exti9_5(void)
+{
+    ISR_ENTER();
+    if (EXTI->PR & EXTI_PR_PR5) {
         EXTI->PR |= EXTI_PR_PR5;        /* clear status bit by writing a 1 to it */
         config[GPIO_IRQ_5].cb();
     }
@@ -1066,7 +1123,17 @@ __attribute__((naked)) void isr_exti4_15(void)
         EXTI->PR |= EXTI_PR_PR9;        /* clear status bit by writing a 1 to it */
         config[GPIO_IRQ_9].cb();
     }
-    else if (EXTI->PR & EXTI_PR_PR10) {
+
+    if (sched_context_switch_request) {
+        thread_yield();
+    }
+    ISR_EXIT();
+}
+
+__attribute__((naked)) void isr_exti15_10(void)
+{
+    ISR_ENTER();
+    if (EXTI->PR & EXTI_PR_PR10) {
         EXTI->PR |= EXTI_PR_PR10;        /* clear status bit by writing a 1 to it */
         config[GPIO_IRQ_10].cb();
     }
@@ -1089,6 +1156,10 @@ __attribute__((naked)) void isr_exti4_15(void)
     else if (EXTI->PR & EXTI_PR_PR15) {
         EXTI->PR |= EXTI_PR_PR15;        /* clear status bit by writing a 1 to it */
         config[GPIO_IRQ_15].cb();
+    }
+
+    if (sched_context_switch_request) {
+        thread_yield();
     }
     ISR_EXIT();
 }

@@ -163,21 +163,3 @@ void at86rf231_disable_interrupts(void)
 {
     disable_exti_interrupt();
 }
-
-__attribute__((naked))
-void isr_exti4(void)
-{
-    ISR_ENTER();
-    if (EXTI->IMR & (1<<GPIO_11_EXTI_LINE) && EXTI->PR & (1<<GPIO_11_EXTI_LINE)) {
-        EXTI->PR = (1<<GPIO_11_EXTI_LINE);
-
-        at86rf231_rx_irq();
-
-        if (sched_context_switch_request) {
-            /* scheduler */
-            thread_yield();
-        }
-    }
-
-    ISR_EXIT();
-}
