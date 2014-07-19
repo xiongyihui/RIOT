@@ -10,6 +10,10 @@
 #include "debugpins.h"
 #include "leds.h"
 
+#include "thread.h"
+#define ENABLE_DEBUG (0)
+#include "debug.h"
+
 //=========================== variables =======================================
 
 scheduler_vars_t scheduler_vars;
@@ -28,7 +32,8 @@ void scheduler_init(void) {
    memset(&scheduler_dbg,0,sizeof(scheduler_dbg_t));
 
    // enable the scheduler's interrupt so SW can wake up the scheduler
-   SCHEDULER_ENABLE_INTERRUPT();
+   // SCHEDULER_ENABLE_INTERRUPT();
+   DEBUG("%s\n",__PRETTY_FUNCTION__);
 }
 
 void scheduler_start(void) {
@@ -39,7 +44,7 @@ void scheduler_start(void) {
 
          // the task to execute is the one at the head of the queue
          pThisTask                = scheduler_vars.task_list;
-
+        DEBUG("run task %p with prio %d\n", pThisTask->cb, pThisTask->prio);
          // shift the queue by one task
          scheduler_vars.task_list = pThisTask->next;
 
@@ -52,13 +57,15 @@ void scheduler_start(void) {
          pThisTask->next          = NULL;
          scheduler_dbg.numTasksCur--;
       }
-      debugpins_task_clr();
-      board_sleep();
-      debugpins_task_set();                      // IAR should halt here if nothing to do
+      // debugpins_task_clr();
+      // board_sleep();
+      // debugpins_task_set();                      // IAR should halt here if nothing to do
+      thread_yield();
    }
 }
 
  void scheduler_push_task(task_cbt cb, task_prio_t prio) {
+    DEBUG("%s\n",__PRETTY_FUNCTION__);
    taskList_item_t*  taskContainer;
    taskList_item_t** taskListWalker;
    INTERRUPT_DECLARATION();
