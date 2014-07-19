@@ -157,17 +157,17 @@ void openwsn_init(void) {
    //- common
    //udprand_init();
    //udplatency_init();
-   udpstorm_init();
+   // udpstorm_init();
    //- board-specific
    //imu_init();
    //+++++ CoAP
    //- debug
    //- core
    //- common
-   rinfo_init();
+   // rinfo_init();
    //rrt_init();
-   rleds__init();
-   rwellknown_init();
+   // rleds__init();
+   // rwellknown_init();
    r6t_init();
    //rreg_init();
    //rex_init();

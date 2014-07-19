@@ -14,6 +14,9 @@ at most MAX_NUM_TIMERS timers.
 #include "periph/timer.h"
 #include "leds.h"
 
+#define ENABLE_DEBUG (0)
+#include "debug.h"
+
 //=========================== define ==========================================
 
 //=========================== variables =======================================
@@ -39,7 +42,7 @@ Initializes data structures and hardware timer.
  */
 void opentimers_init(void){
    uint8_t i;
-
+   DEBUG("%s\n",__PRETTY_FUNCTION__);
    // initialize local variables
    opentimers_vars.running=FALSE;
    for (i=0;i<MAX_NUM_TIMERS;i++) {
@@ -80,7 +83,7 @@ The timer works as follows:
 \returns TOO_MANY_TIMERS_ERROR if the timer could NOT be started.
  */
 opentimer_id_t opentimers_start(uint32_t duration, timer_type_t type, time_type_t timetype, opentimers_cbt callback) {
-
+   DEBUG("%s\n",__PRETTY_FUNCTION__);
    uint8_t  id;
 
    // find an unused timer
@@ -150,6 +153,7 @@ opentimer_id_t opentimers_start(uint32_t duration, timer_type_t type, time_type_
 \brief Replace the period of a running timer.
  */
 void  opentimers_setPeriod(opentimer_id_t id,time_type_t timetype,uint32_t newDuration) {
+   DEBUG("%s\n",__PRETTY_FUNCTION__);
    if        (timetype==TIME_MS) {
       opentimers_vars.timersBuf[id].period_ticks      = newDuration*PORT_TICS_PER_MS;
       opentimers_vars.timersBuf[id].wraps_remaining   = (newDuration*PORT_TICS_PER_MS/MAX_TICKS_IN_SINGLE_CLOCK);//65535=maxValue of uint16_t
@@ -183,6 +187,7 @@ Sets the timer to "not running". the system recovers even if this was the next
 timer to expire.
  */
 void opentimers_stop(opentimer_id_t id) {
+   DEBUG("%s\n",__PRETTY_FUNCTION__);
    opentimers_vars.timersBuf[id].isrunning=FALSE;
 }
 
@@ -192,6 +197,7 @@ void opentimers_stop(opentimer_id_t id) {
 Sets the timer to " running".
  */
 void opentimers_restart(opentimer_id_t id) {
+   DEBUG("%s\n",__PRETTY_FUNCTION__);
    opentimers_vars.timersBuf[id].isrunning=TRUE;
 }
 
@@ -208,7 +214,7 @@ corresponding callback(s), and restarts the hardware timer with the next timer
 to expire.
  */
 void opentimers_timer_callback(void) {
-
+   DEBUG("%s\n",__PRETTY_FUNCTION__);
    opentimer_id_t   id;
    PORT_TIMER_WIDTH min_timeout;
    bool             found;
@@ -295,6 +301,7 @@ void opentimers_timer_callback(void) {
 
 void opentimers_sleepTimeCompesation(uint16_t sleepTime)
 {
+   DEBUG("%s\n",__PRETTY_FUNCTION__);
    opentimer_id_t   id;
    PORT_TIMER_WIDTH min_timeout;
    bool             found;

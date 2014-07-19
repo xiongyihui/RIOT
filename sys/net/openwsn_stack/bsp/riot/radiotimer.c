@@ -15,7 +15,7 @@ On openmoteSTM32, we use RTC for the radiotimer module.
 #include "radiotimer.h"
 #include "board_info.h"
 
-#define ENABLE_DEBUG (0)
+#define ENABLE_DEBUG (1)
 #include "debug.h"
 
 
@@ -66,6 +66,7 @@ void radiotimer_setEndFrameCb(radiotimer_capture_cbt cb) {
 }
 
 void radiotimer_start(uint16_t period) {
+    DEBUG("%s\n", __PRETTY_FUNCTION__);
     timer_init(TIMER_1, 1, &radiotimer_isr);
     timer_set(TIMER_1, 1, (0xffff)&((unsigned int)period));
     current_period = period;
@@ -143,7 +144,8 @@ kick_scheduler_t radiotimer_isr(void) {
       case RADIOTIMER_NONE:                     // this should not happen
             DEBUG("%s none\n", __PRETTY_FUNCTION__);
       default:
-            while(1);                               // this should not happen
+            DEBUG("%s default\n", __PRETTY_FUNCTION__);
+            // while(1);                               // this should not happen
     }
     return DO_NOT_KICK_SCHEDULER;
 }

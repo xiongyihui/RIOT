@@ -6,8 +6,10 @@
 #include "debugpins.h"
 #include "leds.h"
 #include "board.h"
+#include "spi.h"
+#include "periph_conf.h"
 
-#define ENABLE_DEBUG (0)
+#define ENABLE_DEBUG (1)
 #include "debug.h"
 
 
@@ -45,10 +47,10 @@ void radio_init(void) {
    
    // change state
    radio_vars.state          = RADIOSTATE_STOPPED;
-  
+   DEBUG("%s\n",__PRETTY_FUNCTION__);
    // configure the radio
    radio_spiWriteReg(RG_TRX_STATE, CMD_FORCE_TRX_OFF);    // turn radio off
-  
+   
    radio_spiWriteReg(RG_IRQ_MASK,
                      (AT_IRQ_RX_START| AT_IRQ_TRX_END));  // tell radio to fire interrupt on TRX_END and RX_START
    radio_spiReadReg(RG_IRQ_STATUS);                       // deassert the interrupt pin in case is high
@@ -58,11 +60,11 @@ void radio_init(void) {
    //busy wait until radio status is TRX_OFF
    uint16_t c = 0;
    while((radio_spiReadReg(RG_TRX_STATUS) & 0x1F) != TRX_OFF)
-       ;// if (c++ == 10000) {
-//            DEBUG("radio_spiReadReg timeout\n");
-//            break;
-//        }
-   
+       if (c++ == 10000) {
+           DEBUG("radio_spiReadReg timeout\n");
+           break;
+       }
+   DEBUG("%s\n",__PRETTY_FUNCTION__);
    // change state
    radio_vars.state          = RADIOSTATE_RFOFF;
 }
@@ -267,11 +269,19 @@ void radio_getReceivedFrame(uint8_t* pBufRead,
 
 //=========================== private =========================================
 
+static inline void CSn_SET(void)
+{
+    SPI_0_CS_PORT->BSRR = (1 << SPI_0_CS_PIN);
+}
+static inline void CSn_CLR(void)
+{
+    SPI_0_CS_PORT->BRR = (1 << SPI_0_CS_PIN);
+}
 
 uint8_t radio_spiReadRadioInfo(void){
    uint8_t              spi_tx_buffer[3];
    uint8_t              spi_rx_buffer[3];
-
+   DEBUG("%s\n",__PRETTY_FUNCTION__);
    // prepare buffer to send over SPI
    spi_tx_buffer[0]     =  (0x80 | 0x1E);        // [b7]    Read/Write:    1    (read)
    // [b6]    RAM/Register : 1    (register)
@@ -280,50 +290,57 @@ uint8_t radio_spiReadRadioInfo(void){
    spi_tx_buffer[2]     =  0x00;                 // send a SNOP strobe just to get the reg value
 
    // retrieve radio manufacturer ID over SPI
-   spi_txrx(spi_tx_buffer,
-         sizeof(spi_tx_buffer),
-         SPI_BUFFER,
-         spi_rx_buffer,
-         sizeof(spi_rx_buffer),
-         SPI_FIRST,
-         SPI_LAST);
-
+   // spi_txrx(spi_tx_buffer,
+   //       sizeof(spi_tx_buffer),
+   //       SPI_BUFFER,
+   //       spi_rx_buffer,
+   //       sizeof(spi_rx_buffer),
+   //       SPI_FIRST,
+   //       SPI_LAST);
+   CSn_CLR();
+   spi_transfer_bytes(SPI_0, spi_tx_buffer, spi_rx_buffer, 3);
+   CSn_SET();
    return spi_rx_buffer[2];
 }
 
 void radio_spiWriteReg(uint8_t reg_addr, uint8_t reg_setting) {
    uint8_t spi_tx_buffer[2];
    uint8_t spi_rx_buffer[2];
-   
    spi_tx_buffer[0] = (0xC0 | reg_addr);        // turn addess in a 'reg write' address
    spi_tx_buffer[1] = reg_setting;
    
-   spi_txrx(spi_tx_buffer,
-            sizeof(spi_tx_buffer),
-            SPI_BUFFER,
-            (uint8_t*)spi_rx_buffer,
-            sizeof(spi_rx_buffer),
-            SPI_FIRST,
-            SPI_LAST);
+   // spi_txrx(spi_tx_buffer,
+   //          sizeof(spi_tx_buffer),
+   //          SPI_BUFFER,
+   //          (uint8_t*)spi_rx_buffer,
+   //          sizeof(spi_rx_buffer),
+   //          SPI_FIRST,
+   //          SPI_LAST);
+   CSn_CLR();
+   spi_transfer_byte(SPI_0, spi_tx_buffer[0], NULL);
+   spi_transfer_byte(SPI_0, spi_tx_buffer[1], NULL);
+   CSn_SET();
 }
 
 uint8_t radio_spiReadReg(uint8_t reg_addr) {
    uint8_t spi_tx_buffer[2];
    uint8_t spi_rx_buffer[2];
-   
    spi_tx_buffer[0] = (0x80 | reg_addr);        // turn addess in a 'reg read' address
    spi_tx_buffer[1] = 0x00;                     // send a no_operation command just to get the reg value
    
-   spi_txrx(spi_tx_buffer,
-            sizeof(spi_tx_buffer),
-            SPI_BUFFER,
-            (uint8_t*)spi_rx_buffer,
-            sizeof(spi_rx_buffer),
-            SPI_FIRST,
-            SPI_LAST);
-   
+   // spi_txrx(spi_tx_buffer,
+   //          sizeof(spi_tx_buffer),
+   //          SPI_BUFFER,
+   //          (uint8_t*)spi_rx_buffer,
+   //          sizeof(spi_rx_buffer),
+   //          SPI_FIRST,
+   //          SPI_LAST);
+   CSn_CLR();
+   spi_transfer_byte(SPI_0, spi_tx_buffer[0], NULL);
+   spi_transfer_byte(SPI_0, 0, spi_rx_buffer);
+   CSn_SET();
   
-  return spi_rx_buffer[1];
+  return spi_rx_buffer[0];
 }
 
 /** for testing purposes, remove if not needed anymore**/
@@ -331,25 +348,31 @@ uint8_t radio_spiReadReg(uint8_t reg_addr) {
 void radio_spiWriteTxFifo(uint8_t* bufToWrite, uint8_t  lenToWrite) {
    uint8_t spi_tx_buffer[2];
    uint8_t spi_rx_buffer[1+1+127];               // 1B SPI address, 1B length, max. 127B data
-   
+   DEBUG("%s\n",__PRETTY_FUNCTION__);
    spi_tx_buffer[0] = 0x60;                      // SPI destination address for TXFIFO
    spi_tx_buffer[1] = lenToWrite;                // length byte
    
-   spi_txrx(spi_tx_buffer,
-            sizeof(spi_tx_buffer),
-            SPI_BUFFER,
-            spi_rx_buffer,
-            sizeof(spi_rx_buffer),
-            SPI_FIRST,
-            SPI_NOTLAST);
+   CSn_CLR();
+   spi_transfer_byte(SPI_0, spi_tx_buffer[0], NULL);
+   spi_transfer_byte(SPI_0, spi_tx_buffer[1], NULL);
+   spi_transfer_bytes(SPI_0, bufToWrite, NULL, lenToWrite);
+   CSn_SET();
+
+   // spi_txrx(spi_tx_buffer,
+   //          sizeof(spi_tx_buffer),
+   //          SPI_BUFFER,
+   //          spi_rx_buffer,
+   //          sizeof(spi_rx_buffer),
+   //          SPI_FIRST,
+   //          SPI_NOTLAST);
    
-   spi_txrx(bufToWrite,
-            lenToWrite,
-            SPI_BUFFER,
-            spi_rx_buffer,
-            sizeof(spi_rx_buffer),
-            SPI_NOTFIRST,
-            SPI_LAST);
+   // spi_txrx(bufToWrite,
+   //          lenToWrite,
+   //          SPI_BUFFER,
+   //          spi_rx_buffer,
+   //          sizeof(spi_rx_buffer),
+   //          SPI_NOTFIRST,
+   //          SPI_LAST);
 }
 
 
@@ -366,55 +389,63 @@ void radio_spiReadRxFifo(uint8_t* pBufRead,
    // - *[1B]     LQI
    uint8_t spi_tx_buffer[125];
    uint8_t spi_rx_buffer[3];
-   
+   DEBUG("%s\n",__PRETTY_FUNCTION__);
    spi_tx_buffer[0] = 0x20;
    
+   CSn_CLR();
+   spi_transfer_byte(SPI_0, spi_tx_buffer[0], NULL);
+   spi_transfer_byte(SPI_0, 0, spi_rx_buffer);
    // 2 first bytes
-   spi_txrx(spi_tx_buffer,
-            2,
-            SPI_BUFFER,
-            spi_rx_buffer,
-            sizeof(spi_rx_buffer),
-            SPI_FIRST,
-            SPI_NOTLAST);
+   // spi_txrx(spi_tx_buffer,
+   //          2,
+   //          SPI_BUFFER,
+   //          spi_rx_buffer,
+   //          sizeof(spi_rx_buffer),
+   //          SPI_FIRST,
+   //          SPI_NOTLAST);
    
-   *pLenRead  = spi_rx_buffer[1];
+   *pLenRead  = spi_rx_buffer[0];
    
    if (*pLenRead>2 && *pLenRead<=127) {
       // valid length
+      spi_transfer_byte(SPI_0, spi_tx_buffer[0], NULL);
+      spi_transfer_bytes(SPI_0, NULL, pBufRead, *pLenRead);
       
-      //read packet
-      spi_txrx(spi_tx_buffer,
-               *pLenRead,
-               SPI_BUFFER,
-               pBufRead,
-               125,
-               SPI_NOTFIRST,
-               SPI_NOTLAST);
-      
+      // //read packet
+      // spi_txrx(spi_tx_buffer,
+      //          *pLenRead,
+      //          SPI_BUFFER,
+      //          pBufRead,
+      //          125,
+      //          SPI_NOTFIRST,
+      //          SPI_NOTLAST);
+      spi_transfer_byte(SPI_0, 0, 0);
+      spi_transfer_byte(SPI_0, 0, 0);
+      spi_transfer_byte(SPI_0, 0, pLqi);
       // CRC (2B) and LQI (1B)
-      spi_txrx(spi_tx_buffer,
-               2+1,
-               SPI_BUFFER,
-               spi_rx_buffer,
-               3,
-               SPI_NOTFIRST,
-               SPI_LAST);
+      // spi_txrx(spi_tx_buffer,
+      //          2+1,
+      //          SPI_BUFFER,
+      //          spi_rx_buffer,
+      //          3,
+      //          SPI_NOTFIRST,
+      //          SPI_LAST);
       
-      *pLqi   = spi_rx_buffer[2];
+      // *pLqi   = spi_rx_buffer[2];
       
    } else {
       // invalid length
-      
+      spi_transfer_byte(SPI_0, 0, 0);
       // read a just byte to close spi
-      spi_txrx(spi_tx_buffer,
-               1,
-               SPI_BUFFER,
-               spi_rx_buffer,
-               sizeof(spi_rx_buffer),
-               SPI_NOTFIRST,
-               SPI_LAST);
+      // spi_txrx(spi_tx_buffer,
+      //          1,
+      //          SPI_BUFFER,
+      //          spi_rx_buffer,
+      //          sizeof(spi_rx_buffer),
+      //          SPI_NOTFIRST,
+      //          SPI_LAST);
    }
+   CSn_SET();
 }
 
 //=========================== callbacks =======================================

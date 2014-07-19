@@ -11,7 +11,7 @@
 #include "leds.h"
 
 #include "thread.h"
-#define ENABLE_DEBUG (0)
+#define ENABLE_DEBUG (1)
 #include "debug.h"
 
 //=========================== variables =======================================
@@ -38,6 +38,7 @@ void scheduler_init(void) {
 
 void scheduler_start(void) {
    taskList_item_t* pThisTask;
+   DEBUG("%s\n",__PRETTY_FUNCTION__);
    while (1) {
       while(scheduler_vars.task_list!=NULL) {
          // there is still at least one task in the linked-list of tasks
@@ -65,7 +66,7 @@ void scheduler_start(void) {
 }
 
  void scheduler_push_task(task_cbt cb, task_prio_t prio) {
-    DEBUG("%s\n",__PRETTY_FUNCTION__);
+   DEBUG("%s\n",__PRETTY_FUNCTION__);
    taskList_item_t*  taskContainer;
    taskList_item_t** taskListWalker;
    INTERRUPT_DECLARATION();
