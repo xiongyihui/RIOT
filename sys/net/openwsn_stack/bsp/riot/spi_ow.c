@@ -8,6 +8,7 @@
 #include "radio.h"
 #include "periph/gpio.h"
 #include "periph_conf.h"
+#include "at86rf231.h"
 
 #define ENABLE_DEBUG (0)
 #include "debug.h"
@@ -68,21 +69,6 @@ static inline void SLEEP_CLR(void)
 void spi_init_ow(void) {
    // clear variables
     memset(&spi_vars,0,sizeof(spi_vars_t));
-    /* CS */
-    gpio_init_out(SPI_0_CS_GPIO, GPIO_NOPULL);
-    /* SLEEP */
-    gpio_init_out(SPI_0_SLEEP_GPIO, GPIO_NOPULL);
-    /* RESET */
-    gpio_init_out(SPI_0_RESET_GPIO, GPIO_NOPULL);
-  
-    // force reset
-    RESET_CLR();
-    CSn_SET();
-    SLEEP_CLR();
-
-    for (uint16_t j=0;j<0xFFFF;j++); //small wait
-
-    RESET_SET();
   
     /* set up GPIO pins */
     /* SCLK and MOSI*/
@@ -104,6 +90,83 @@ void spi_init_ow(void) {
 
     /* Connect EXTI4 Line to PC4 pin */
     gpio_irq_enable(SPI_0_IRQ0_GPIO);
+
+    /* CS */
+    gpio_init_out(SPI_0_CS_GPIO, GPIO_NOPULL);
+    /* SLEEP */
+    gpio_init_out(SPI_0_SLEEP_GPIO, GPIO_NOPULL);
+    /* RESET */
+    gpio_init_out(SPI_0_RESET_GPIO, GPIO_NOPULL);
+  
+    // force reset
+    RESET_CLR();
+    CSn_SET();
+    SLEEP_CLR();
+
+    for (uint16_t j=0;j<0xFFFF;j++); //small wait
+
+    RESET_SET();
+    // /* set up GPIO pins */
+    // /* SCLK and MOSI*/
+    // GPIOA->CRL &= ~(0xf << (5 * 4));
+    // GPIOA->CRL |= (0xb << (5 * 4));
+    // GPIOA->CRL &= ~(0xf << (7 * 4));
+    // GPIOA->CRL |= (0xb << (7 * 4));
+    // /* MISO */
+    // gpio_init_in(SPI_0_MISO_GPIO, GPIO_NOPULL);
+
+    // /* SPI init */
+    // spi_init_master(SPI_0, SPI_CONF_FIRST_RISING, 4500000);
+
+    // spi_poweron(SPI_0);
+
+    // /* IRQ0 */
+    // gpio_init_in(SPI_0_IRQ0_GPIO, GPIO_NOPULL);
+    // gpio_init_int(SPI_0_IRQ0_GPIO, GPIO_NOPULL, GPIO_RISING, radio_isr);
+
+    // /* Connect EXTI4 Line to PC4 pin */
+    // gpio_irq_enable(SPI_0_IRQ0_GPIO);
+
+    // /* CS */
+    // gpio_init_out(SPI_0_CS_GPIO, GPIO_NOPULL);
+    // /* SLEEP */
+    // gpio_init_out(SPI_0_SLEEP_GPIO, GPIO_NOPULL);
+    // /* RESET */
+    // gpio_init_out(SPI_0_RESET_GPIO, GPIO_NOPULL);
+
+    // /* force reset */
+    // RESET_CLR();
+    // CSn_SET();
+    // SLEEP_CLR();
+
+    // vtimer_usleep(AT86RF231_TIMING__RESET);
+
+    // RESET_SET();
+
+    // /* Wait until TRX_OFF is entered */
+    // vtimer_usleep(AT86RF231_TIMING__RESET_TO_TRX_OFF);
+
+    // /* Send a FORCE TRX OFF command */
+    // at86rf231_reg_write(AT86RF231_REG__TRX_STATE, AT86RF231_TRX_STATE__FORCE_TRX_OFF);
+
+    // /* Wait until TRX_OFF state is entered from P_ON */
+    // vtimer_usleep(AT86RF231_TIMING__SLEEP_TO_TRX_OFF);
+
+    // /* busy wait for TRX_OFF state */
+    // uint8_t status;
+    // uint8_t max_wait = 100;   // TODO : move elsewhere, this is in 10us
+
+    // do {
+    //     status = at86rf231_get_status();
+
+    //     vtimer_usleep(10);
+
+    //     if (!--max_wait) {
+    //         printf("at86rf231 : ERROR : could not enter TRX_OFF mode\n");
+    //         break;
+    //     }
+    // } while ((status & AT86RF231_TRX_STATUS_MASK__TRX_STATUS)
+    //          != AT86RF231_TRX_STATUS__TRX_OFF);
 
 }
 
