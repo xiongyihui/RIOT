@@ -105,12 +105,15 @@ int timer_init(tim_t dev, unsigned int ticks_per_us, void (*callback)(int))
 
 int timer_set(tim_t dev, int channel, unsigned int timeout)
 {
+    DEBUG("set timer: %x channel: %x to %i\n", dev, channel, timeout);
     int now = timer_read(dev);
     return timer_set_absolute(dev, channel, now + timeout - 1);
 }
 
 int timer_set_absolute(tim_t dev, int channel, unsigned int value)
 {
+
+    DEBUG("set absolute timer: %x channel: %x to %i\n", dev, channel, value);
     TIM_TypeDef *timer = NULL;
 
     switch (dev) {
@@ -348,9 +351,7 @@ void timer_reset(tim_t dev)
 __attribute__ ((naked)) void TIMER_0_ISR(void)
 {
     ISR_ENTER();
-    DEBUG("enter ISR\n");
     irq_handler(TIMER_0, TIMER_0_DEV);
-    DEBUG("leave ISR\n");
     ISR_EXIT();
 }
 #endif
@@ -375,9 +376,11 @@ __attribute__ ((naked)) void TIMER_2_ISR(void)
 
 static inline void irq_handler(tim_t timer, TIM_TypeDef *dev)
 {
+    DEBUG("Fire timer: %x now: %x channel: ", timer, dev->CNT);
     if (dev->SR & TIM_SR_UIF) {
         DEBUG("Overflow.\n");
         dev->SR &= ~(TIM_SR_UIF|TIM_SR_CC1IF|TIM_SR_CC2IF|TIM_SR_CC3IF|TIM_SR_CC4IF);
+        config[timer].cb(-1);
         return;
     }
     if (dev->SR & TIM_SR_CC1IF) {

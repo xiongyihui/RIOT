@@ -71,5 +71,8 @@ unsigned long hwtimer_arch_now(void)
 
 void irq_handler(int channel)
 {
+    if (channel == -1) {
+        return;
+    }
     timeout_handler((short)channel);
 }
