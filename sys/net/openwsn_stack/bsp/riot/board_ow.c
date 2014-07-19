@@ -1,6 +1,7 @@
 #include "board_ow.h"
 #include "radiotimer.h"
-#include "leds.h"
+#include "radio.h"
+#include "debugpins.h"
 
 void board_init_ow(void)
 {

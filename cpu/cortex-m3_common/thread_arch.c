@@ -125,6 +125,7 @@ __attribute__((naked)) void thread_arch_start_threading(void)
     enableIRQ();
     /* trigger the SVC interrupt which will get and execute the next thread */
     asm("svc    0x01");
+    UNREACHABLE();
 }
 
 void thread_arch_yield(void)

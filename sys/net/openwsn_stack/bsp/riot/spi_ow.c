@@ -159,7 +159,7 @@ void spi_txrx(uint8_t*     bufTx,
    while (spi_vars.txBytesLeft>0) {
       // write next byte to TX buffer
    // SPI_I2S_SendData(SPI1,*spi_vars.pNextTxByte);
-        spi_transfer_byte(SPI_0, *spi_vars.pNextTxByte, NULL);
+        spi_transfer_byte(SPI_0, *((char*)spi_vars.pNextTxByte), NULL);
 
       // busy wait on the interrupt flag
 //       uint16_t c = 0;
@@ -175,17 +175,17 @@ void spi_txrx(uint8_t*     bufTx,
       switch (spi_vars.returnType) {
          case SPI_FIRSTBYTE:
             if (spi_vars.numTxedBytes==0) {
-                spi_transfer_byte(SPI_0, 0, spi_vars.pNextRxByte);
+                spi_transfer_byte(SPI_0, 0, (char*)spi_vars.pNextRxByte);
                // *spi_vars.pNextRxByte   = SPI_I2S_ReceiveData(SPI1);
             }
             break;
          case SPI_BUFFER:
-            spi_transfer_byte(SPI_0, 0, spi_vars.pNextRxByte);
+            spi_transfer_byte(SPI_0, 0, (char*)spi_vars.pNextRxByte);
             // *spi_vars.pNextRxByte      = SPI_I2S_ReceiveData(SPI1);
             spi_vars.pNextRxByte++;
             break;
          case SPI_LASTBYTE:
-            spi_transfer_byte(SPI_0, 0, spi_vars.pNextRxByte);
+            spi_transfer_byte(SPI_0, 0, (char*)spi_vars.pNextRxByte);
             // *spi_vars.pNextRxByte      = SPI_I2S_ReceiveData(SPI1);
             break;
       }

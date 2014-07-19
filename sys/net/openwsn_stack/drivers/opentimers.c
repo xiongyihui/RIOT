@@ -10,6 +10,7 @@ at most MAX_NUM_TIMERS timers.
 #include "openwsn.h"
 #include "opentimers.h"
 // #include "bsp_timer.h"
+#include "board_ow.h"
 #include "periph/timer.h"
 #include "leds.h"
 
