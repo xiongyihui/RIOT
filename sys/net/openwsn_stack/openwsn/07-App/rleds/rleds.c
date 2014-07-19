@@ -30,7 +30,7 @@ void     rleds_sendDone(
 
 //=========================== public ==========================================
 
-void rleds__init() {
+void rleds__init(void) {
 
    // prepare the resource descriptor for the /l path
    rleds_vars.desc.path0len            = sizeof(rleds_path0)-1;

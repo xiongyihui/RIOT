@@ -14,6 +14,7 @@ to return the board's description.
 
 #include "stdint.h"
 #include "string.h"
+#include "periph_conf.h"
 
 //=========================== defines =========================================
 

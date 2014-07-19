@@ -22,9 +22,10 @@
  * @brief Timer configuration
  * @{
  */
-#define TIMER_NUMOF         (2U)
+#define TIMER_NUMOF         (3U)
 #define TIMER_0_EN          1
 #define TIMER_1_EN          1
+#define TIMER_2_EN          1
 
 /* Timer 0 configuration */
 #define TIMER_0_DEV         TIM2
@@ -45,6 +46,16 @@
 #define TIMER_1_ISR         isr_tim3
 #define TIMER_1_IRQ_CHAN    TIM3_IRQn
 #define TIMER_1_IRQ_PRIO    1
+
+/* Timer 2 configuration */
+#define TIMER_2_DEV         TIM4
+#define TIMER_2_CHANNELS    2
+#define TIMER_2_PRESCALER   (36000U)
+#define TIMER_2_MAX_VALUE   (0xffff)
+#define TIMER_2_CLKEN()     (RCC->APB1ENR |= RCC_APB1ENR_TIM4EN)
+#define TIMER_2_ISR         isr_tim4
+#define TIMER_2_IRQ_CHAN    TIM4_IRQn
+#define TIMER_2_IRQ_PRIO    1
 /** @} */
 
 /**
@@ -84,7 +95,7 @@
 /**
  * @brief GPIO configuration
  */
-#define GPIO_NUMOF          15
+#define GPIO_NUMOF          16
 #define GPIO_0_EN           1
 #define GPIO_1_EN           1
 #define GPIO_2_EN           1

@@ -35,6 +35,7 @@ DIRS += openwsn/03b-IPv6
 DIRS += openwsn/04-TRAN
 DIRS += openwsn/cross-layers
 DIRS += openwsn/07-App/rinfo
+DIRS += openwsn/07-App/rleds
 DIRS += openwsn/07-App/rwellknown
 DIRS += openwsn/07-App/r6t
 DIRS += openwsn/07-App/ohlone

@@ -68,6 +68,16 @@ int timer_init(tim_t dev, unsigned int ticks_per_us, void (*callback)(int))
             timer = TIMER_1_DEV;
             break;
 #endif
+#if TIMER_2_EN
+        case TIMER_2:
+            /* enable timer peripheral clock */
+            TIMER_2_CLKEN();
+            /* set timer's IRQ priority */
+            NVIC_SetPriority(TIMER_2_IRQ_CHAN, TIMER_2_IRQ_PRIO);
+            /* select timer */
+            timer = TIMER_2_DEV;
+            break;
+#endif
         case TIMER_UNDEFINED:
         default:
             return -1;
@@ -112,6 +122,11 @@ int timer_set_absolute(tim_t dev, int channel, unsigned int value)
 #if TIMER_1_EN
         case TIMER_1:
             timer = TIMER_1_DEV;
+            break;
+#endif
+#if TIMER_2_EN
+        case TIMER_2:
+            timer = TIMER_2_DEV;
             break;
 #endif
         case TIMER_UNDEFINED:
@@ -161,6 +176,11 @@ int timer_clear(tim_t dev, int channel)
             timer = TIMER_1_DEV;
             break;
 #endif
+#if TIMER_2_EN
+        case TIMER_2:
+            timer = TIMER_2_DEV;
+            break;
+#endif
         case TIMER_UNDEFINED:
         default:
             return -1;
@@ -197,6 +217,11 @@ unsigned int timer_read(tim_t dev)
             return TIMER_1_DEV->CNT;
             break;
 #endif
+#if TIMER_2_EN
+        case TIMER_2:
+            return TIMER_2_DEV->CNT;
+            break;
+#endif
         case TIMER_UNDEFINED:
         default:
             return 0;
@@ -214,6 +239,11 @@ void timer_start(tim_t dev)
 #if TIMER_1_EN
         case TIMER_1:
             TIMER_1_DEV->CR1 |= TIM_CR1_CEN;
+            break;
+#endif
+#if TIMER_2_EN
+        case TIMER_2:
+            TIMER_2_DEV->CR1 |= TIM_CR1_CEN;
             break;
 #endif
         case TIMER_UNDEFINED:
@@ -234,6 +264,11 @@ void timer_stop(tim_t dev)
             TIMER_1_DEV->CR1 &= ~TIM_CR1_CEN;
             break;
 #endif
+#if TIMER_2_EN
+        case TIMER_2:
+            TIMER_2_DEV->CR1 &= ~TIM_CR1_CEN;
+            break;
+#endif
         case TIMER_UNDEFINED:
             break;
     }
@@ -250,6 +285,11 @@ void timer_irq_enable(tim_t dev)
 #if TIMER_1_EN
         case TIMER_1:
             NVIC_EnableIRQ(TIMER_1_IRQ_CHAN);
+            break;
+#endif
+#if TIMER_2_EN
+        case TIMER_2:
+            NVIC_EnableIRQ(TIMER_2_IRQ_CHAN);
             break;
 #endif
         case TIMER_UNDEFINED:
@@ -270,6 +310,11 @@ void timer_irq_disable(tim_t dev)
             NVIC_DisableIRQ(TIMER_1_IRQ_CHAN);
             break;
 #endif
+#if TIMER_2_EN
+        case TIMER_2:
+            NVIC_DisableIRQ(TIMER_2_IRQ_CHAN);
+            break;
+#endif
         case TIMER_UNDEFINED:
             break;
     }
@@ -286,6 +331,11 @@ void timer_reset(tim_t dev)
 #if TIMER_1_EN
         case TIMER_1:
             TIMER_1_DEV->CNT = 0;
+            break;
+#endif
+#if TIMER_2_EN
+        case TIMER_2:
+            TIMER_2_DEV->CNT = 0;
             break;
 #endif
         case TIMER_UNDEFINED:
@@ -310,6 +360,15 @@ __attribute__ ((naked)) void TIMER_1_ISR(void)
 {
     ISR_ENTER();
     irq_handler(TIMER_1, TIMER_1_DEV);
+    ISR_EXIT();
+}
+#endif
+
+#if TIMER_2_EN
+__attribute__ ((naked)) void TIMER_2_ISR(void)
+{
+    ISR_ENTER();
+    irq_handler(TIMER_2, TIMER_2_DEV);
     ISR_EXIT();
 }
 #endif

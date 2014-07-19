@@ -1,5 +1,5 @@
-#ifndef __UART_H
-#define __UART_H
+#ifndef __UART_OW_H
+#define __UART_OW_H
 
 /**
 \addtogroup BSP

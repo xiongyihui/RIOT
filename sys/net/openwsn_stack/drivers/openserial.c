@@ -17,7 +17,7 @@
 #include "openbridge.h"
 #include "leds.h"
 #include "schedule.h"
-#include "uart.h"
+#include "uart_ow.h"
 #include "opentimers.h"
 #include "openhdlc.h"
 

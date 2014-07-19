@@ -89,19 +89,19 @@ uint16_t radiotimer_getPeriod(void) {
 //===== compare
 
 void radiotimer_schedule(uint16_t offset) {
-    timer_disable_interrupt(TIMER_1);
+    timer_irq_disable(TIMER_1);
     timer_set(TIMER_1, 1, offset);
     current_period = offset;
-    timer_enable_interrupt(TIMER_1);
+    timer_irq_enable(TIMER_1);
     //set radiotimer irpstatus
     radiotimer_vars.overflowORcompare = RADIOTIMER_COMPARE;
 }
 
 void radiotimer_cancel(void) {
-    timer_disable_interrupt(TIMER_1);
+    timer_irq_disable(TIMER_1);
     timer_clear(TIMER_1, 1);
     current_period = 0;
-    timer_enable_interrupt(TIMER_1);
+    timer_irq_enable(TIMER_1);
     
     //set radiotimer irpstatus
     radiotimer_vars.overflowORcompare = RADIOTIMER_OVERFLOW;
