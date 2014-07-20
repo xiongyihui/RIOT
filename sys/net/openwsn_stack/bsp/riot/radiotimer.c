@@ -15,7 +15,7 @@ On openmoteSTM32, we use RTC for the radiotimer module.
 #include "radiotimer.h"
 #include "board_info.h"
 
-#define ENABLE_DEBUG (1)
+#define ENABLE_DEBUG (0)
 #include "debug.h"
 
 
@@ -70,6 +70,8 @@ void radiotimer_start(uint16_t period) {
     timer_init(TIMER_1, 1, &radiotimer_isr);
     timer_set(TIMER_1, 1, (0xffff)&((unsigned int)period));
     current_period = period;
+   radiotimer_vars.currentSlotPeriod = period;
+   radiotimer_vars.overflowORcompare = RADIOTIMER_OVERFLOW;
 }
 
 //===== direct access
@@ -81,6 +83,10 @@ uint16_t radiotimer_getValue(void) {
 void radiotimer_setPeriod(uint16_t period) {
     timer_set(TIMER_1, 1, (0xffff)&((unsigned int)period));
     current_period = period;
+    radiotimer_vars.currentSlotPeriod = period;
+    
+    //set radiotimer irpstatus
+    radiotimer_vars.overflowORcompare = RADIOTIMER_OVERFLOW;
 }
 
 uint16_t radiotimer_getPeriod(void) {

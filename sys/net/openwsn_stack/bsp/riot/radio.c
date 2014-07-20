@@ -193,11 +193,11 @@ void radio_txNow(void) {
    PORT_TIMER_WIDTH val;
    // change state
    radio_vars.state = RADIOSTATE_TRANSMITTING;
-   leds_radio_toggle();
+   leds_error_toggle();
    // send packet by pulsing the SLP_TR_CNTL pin
    PORT_PIN_RADIO_SLP_TR_CNTL_HIGH();
    PORT_PIN_RADIO_SLP_TR_CNTL_LOW();
-   
+   leds_radio_toggle();
    // The AT86RF231 does not generate an interrupt when the radio transmits the
    // SFD, which messes up the MAC state machine. The danger is that, if we leave
    // this funtion like this, any radio watchdog timer will expire.
@@ -240,6 +240,7 @@ void radio_rxEnable(void) {
 
 void radio_rxNow(void) {
    // nothing to do
+
 }
 
 void radio_getReceivedFrame(uint8_t* pBufRead,
