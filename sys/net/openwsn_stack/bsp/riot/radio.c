@@ -9,7 +9,7 @@
 #include "spi.h"
 #include "periph_conf.h"
 
-#define ENABLE_DEBUG (1)
+#define ENABLE_DEBUG (0)
 #include "debug.h"
 
 
@@ -193,7 +193,7 @@ void radio_txNow(void) {
    PORT_TIMER_WIDTH val;
    // change state
    radio_vars.state = RADIOSTATE_TRANSMITTING;
-   leds_error_toggle();
+   leds_radio_toggle();
    // send packet by pulsing the SLP_TR_CNTL pin
    PORT_PIN_RADIO_SLP_TR_CNTL_HIGH();
    PORT_PIN_RADIO_SLP_TR_CNTL_LOW();
