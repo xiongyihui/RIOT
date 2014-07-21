@@ -26,6 +26,9 @@ QUIET ?= 1
 USEMODULE += ps
 USEMODULE += vtimer
 USEMODULE += openwsn_stack
+USEMODULE += shell
+USEMODULE += shell_commands
+USEMODULE += posix
 
 INCLUDES += -I$(RIOTBASE)/sys/net/openwsn_stack/ -I$(RIOTBASE)/sys/net/openwsn_stack/kernel -I$(RIOTBASE)/sys/net/openwsn_stack/bsp -I$(RIOTBASE)/sys/net/openwsn_stack/bsp/riot
 

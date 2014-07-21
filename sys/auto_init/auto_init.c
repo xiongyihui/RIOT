@@ -64,6 +64,10 @@
 #include "transceiver.h"
 #endif
 
+#ifdef MODULE_OPENWSN_STACK
+#include "openwsn.h"
+#endif
+
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
@@ -183,5 +187,8 @@ void auto_init(void)
 #ifdef MODULE_DESTINY
     DEBUG("Auto init transport layer [destiny] module.\n");
     destiny_init_transport_layer();
+#endif
+#ifdef MODULE_OPENWSN_STACK
+    openwsn_start_thread();
 #endif
 }

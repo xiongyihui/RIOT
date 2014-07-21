@@ -1,20 +1,21 @@
 #include <stdio.h>
 
 #include "vtimer.h"
+#include "shell.h"
+#include "posix_io.h"
 #include "openwsn.h"
+#include "board_uart0.h"
 
 int main(void) {
-//   board_init();
-//   scheduler_init();
-    openwsn_start_thread();
-    unsigned i = 0;
-    while (1) {
-        printf("RIOT -> %u\n", i++);
-        thread_print_all();
-        vtimer_usleep(2000 * 1000);
-    }
-   // openwsn_init();
-   // puts("and now?!");
-   // scheduler_start();
-   while (1); // this line should never be reached
+    shell_t shell;
+
+    posix_open(uart0_handler_pid, 0);
+
+    puts("Welcome to RIOT!");
+
+    shell_init(&shell, NULL, UART0_BUFSIZE, uart0_readc, uart0_putc);
+
+    shell_run(&shell);
+
+    return 0;
 }
