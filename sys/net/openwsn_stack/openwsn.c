@@ -80,6 +80,7 @@
 //=========================== variables =======================================
 
 static char openwsn_stack[KERNEL_CONF_STACKSIZE_MAIN];
+int openwsn_pid = -1;
 
 //=========================== prototypes ======================================
 
@@ -90,9 +91,9 @@ void* openwsn_start(void *arg);
 
 void openwsn_start_thread(void) {
     DEBUG("%s\n",__PRETTY_FUNCTION__);
-    thread_create(openwsn_stack, KERNEL_CONF_STACKSIZE_MAIN,
-                   PRIORITY_OPENWSN+1, CREATE_STACKTEST,
-                   openwsn_start, NULL, "openwsn thread");
+    openwsn_pid = thread_create(openwsn_stack, KERNEL_CONF_STACKSIZE_MAIN,
+                                PRIORITY_OPENWSN-2, CREATE_STACKTEST,
+                                openwsn_start, NULL, "openwsn thread");
 }
 
 void* openwsn_start(void *arg) {
