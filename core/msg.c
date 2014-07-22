@@ -165,7 +165,7 @@ int msg_send_int(msg_t *m, unsigned int target_pid)
         return 1;
     }
     else {
-        DEBUG("msg_send_int: Receiver not waiting.\n");
+        DEBUG("msg_send_int: Receiver %i not waiting.\n", target_pid);
         return (queue_msg(target, m));
     }
 }

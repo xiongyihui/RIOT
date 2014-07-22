@@ -131,6 +131,7 @@ void sched_register_cb(void (*callback)(uint32_t, uint32_t))
 
 void sched_set_status(tcb_t *process, unsigned int status)
 {
+    DEBUGF("changing status for %s from %i to %i\n", process->name, process->status, status);
     if (status >= STATUS_ON_RUNQUEUE) {
         if (!(process->status >= STATUS_ON_RUNQUEUE)) {
             DEBUG("adding process %s to runqueue %u.\n", process->name, process->priority);
